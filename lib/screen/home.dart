@@ -1,8 +1,8 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import './product.dart';
 import './topic2.dart';
 import '../page.dart';
+import '../style.dart';
 
 
 class HomePage extends StatelessWidget {
@@ -22,19 +22,10 @@ class HomePage extends StatelessWidget {
                 },
                 child: Container(
                     margin: EdgeInsets.all(10), width: 350, height:200 ,
-                    decoration: BoxDecoration(
-                        image: const DecorationImage(
-                          image: AssetImage('assets/images/coffee.jpg'),
-                          fit: BoxFit.cover,
-                        )
-                    ),
+                    decoration: background_image('assets/images/coffee.jpg'),
                     child: Text(
                         'order',
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 24,
-                            color: Colors.white
-                        )
+                        style: Default_title_Style
                     ),
                     alignment: Alignment.center
                 ),
@@ -46,19 +37,10 @@ class HomePage extends StatelessWidget {
                 },
                 child: Container(
                     margin: EdgeInsets.all(10), width: 350, height:200 ,
-                    decoration: BoxDecoration(
-                        image: const DecorationImage(
-                          image: AssetImage('assets/images/IMG_8836.jpg'),
-                          fit: BoxFit.cover,
-                        )
-                    ),
+                    decoration: background_image('assets/images/IMG_8836.jpg'),
                     child: Text(
                         'Product',
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 24,
-                            color: Colors.white
-                        )
+                        style: Default_title_Style
                     ),
                     alignment: Alignment.center
                 ),
@@ -70,19 +52,10 @@ class HomePage extends StatelessWidget {
                 },
                 child: Container(
                     margin: EdgeInsets.all(10), width: 350, height:200 ,
-                    decoration: BoxDecoration(
-                        image: const DecorationImage(
-                          image: AssetImage('assets/images/IMG_8837.jpg'),
-                          fit: BoxFit.cover,
-                        )
-                    ),
+                    decoration: background_image('assets/images/IMG_8837.jpg'),
                     child: Text(
                         'Topic2',
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 24,
-                            color: Colors.white
-                        )
+                        style: Default_title_Style
                     ),
                     alignment: Alignment.center
                 ),

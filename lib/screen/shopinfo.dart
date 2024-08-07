@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
+import '../style.dart';
+
 
 class ShopInfoPage extends StatefulWidget {
   @override
@@ -23,22 +25,14 @@ class _ShopInfoPageState extends State<ShopInfoPage> with TickerProviderStateMix
               Container(
                   child: Text(
                       'JAVANICA latin coffee',
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 30,
-                          color: Colors.black
-                      )
+                      style: Shopinfo_title
                   ),
                   alignment: Alignment.center
               ),
               Container(
                   child: Text(
                       '〒781-5101\n 高知県高知市布師田3061\n',
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20,
-                          color: Colors.black
-                      )
+                      style: Shopinfo
                   ),
                   alignment: Alignment.center
               ),
@@ -51,32 +45,17 @@ class _ShopInfoPageState extends State<ShopInfoPage> with TickerProviderStateMix
               ),
               Container(
                   margin: EdgeInsets.all(10), width: 350, height:200 ,
-                  decoration: BoxDecoration(
-                      image: const DecorationImage(
-                        image: AssetImage('assets/images/IMG_8834.jpg'),
-                        fit: BoxFit.cover,
-                      )
-                  ),
+                  decoration: background_image('assets/images/IMG_8834.jpg'),
                   alignment: Alignment.center
               ),
               Container(
                   margin: EdgeInsets.all(10), width: 350, height:200 ,
-                  decoration: BoxDecoration(
-                      image: const DecorationImage(
-                        image: AssetImage('assets/images/IMG_8835.jpg'),
-                        fit: BoxFit.cover,
-                      )
-                  ),
+                  decoration: background_image('assets/images/IMG_8835.jpg'),
                   alignment: Alignment.center
               ),
               Container(
                   margin: EdgeInsets.all(10), width: 350, height:200 ,
-                  decoration: BoxDecoration(
-                      image: const DecorationImage(
-                        image: AssetImage('assets/images/IMG_8836.jpg'),
-                        fit: BoxFit.cover,
-                      )
-                  ),
+                  decoration: background_image('assets/images/IMG_8836.jpg'),
                   alignment: Alignment.center
               ),
             ],
