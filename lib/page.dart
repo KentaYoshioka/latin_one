@@ -4,7 +4,7 @@ import './screen/home.dart';
 import './screen/order.dart';
 import './screen/shops.dart';
 import './screen/inbox.dart';
-
+import './style.dart';
 
 class Page extends StatefulWidget {
   const Page({super.key, required this.title});
@@ -32,11 +32,7 @@ class Pages extends State<Page> {
             centerTitle: true,
             title: const Text(
               'LatinOne',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 24,
-                color: Colors.white,
-              ),
+                style: Default_title_Style
             ),
             backgroundColor: Colors.brown,
             leading: InkWell(
