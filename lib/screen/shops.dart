@@ -1,5 +1,6 @@
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_map_animations/flutter_map_animations.dart';
 import 'package:flutter/material.dart';
 
@@ -63,8 +64,19 @@ class _ShopsPageState extends State<ShopsPage> with TickerProviderStateMixin {
         ),
         children: [
           TileLayer(
-            urlTemplate: 'https://cyberjapandata.gsi.go.jp/xyz/seamlessphoto/{z}/{x}/{y}.jpg',
+            urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
           ),
+          RichAttributionWidget(
+              attributions: [
+                TextSourceAttribution(
+                  'OpenStreetMap contributors',
+                  onTap: () => launchUrl(Uri.parse('https://openstreetmap.org/copyright')),
+                ),
+                TextSourceAttribution(
+                  'Google Map で開く',
+                  onTap: () => launchUrl(Uri.parse('https://maps.app.goo.gl/BqszzYwkEwk8UYrc8')),
+                ),
+              ]),
           MarkerLayer(
             markers: [
               Marker(

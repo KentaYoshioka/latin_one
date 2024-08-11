@@ -15,7 +15,7 @@ class _ShopInfoPageState extends State<ShopInfoPage> with TickerProviderStateMix
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('JAVANICA latin coffee'),
+        title: Text('JAVANICAN latin coffee'),
       ),
       body: Container(
         // padding: EdgeInsets.all(32.0),
@@ -24,7 +24,7 @@ class _ShopInfoPageState extends State<ShopInfoPage> with TickerProviderStateMix
             children: <Widget>[
               Container(
                   child: Text(
-                      'JAVANICA latin coffee',
+                      'JAVANICAN latin coffee',
                       style: Shopinfo_title
                   ),
                   alignment: Alignment.center
@@ -38,10 +38,17 @@ class _ShopInfoPageState extends State<ShopInfoPage> with TickerProviderStateMix
               ),
               ElevatedButton(
                 onPressed: () {
-                  final urlLauncher = UrlLauncher();
-                  urlLauncher.makePhoneCall(dotenv.get('PHONE_NUMBER'));
+                  final phoneLauncher = PhoneLauncher();
+                  phoneLauncher.makePhoneCall(dotenv.get('PHONE_NUMBER'));
                 },
                 child: Text('電話番号：${dotenv.get('PHONE_NUMBER')}'),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  final mapLauncher = MapLauncher();
+                  mapLauncher.makeMap();
+                },
+                child: Text('Google Mapで開く'),
               ),
               Container(
                   margin: EdgeInsets.all(10), width: 350, height:200 ,
@@ -66,12 +73,19 @@ class _ShopInfoPageState extends State<ShopInfoPage> with TickerProviderStateMix
   }
 }
 
-class UrlLauncher {
+class PhoneLauncher {
   Future makePhoneCall(String phoneNumber) async {
     final Uri getPhoneNumber = Uri(
       scheme: 'tel',
       path: phoneNumber,
     );
     await launchUrl(getPhoneNumber);
+  }
+}
+
+class MapLauncher {
+  Future makeMap() async {
+    final getMap = Uri.parse('https://maps.app.goo.gl/BqszzYwkEwk8UYrc8');
+    await launchUrl(getMap);
   }
 }
