@@ -10,13 +10,3 @@ void main() async {
           home: const page.Page(title: 'LatinOne'),
       ));
 }
-
-
-
-
-
-
-
-
-
-
