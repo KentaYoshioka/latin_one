@@ -9,6 +9,7 @@ class OrderPage extends StatefulWidget {
 }
 
 class _OrderPageState extends State<OrderPage> {
+  String shops = '';
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -22,21 +23,46 @@ class _OrderPageState extends State<OrderPage> {
             children: <Widget>[
               GestureDetector(
                 onTap: () async {
-                  await Navigator.push(
+                  String shopinfo = await Navigator.push(
                       context, MaterialPageRoute(builder: (context){
                         return OrderShopsPage();
                         },
-                  ),
-                  );
+                  ));
+                  if (shopinfo != null) {
+                    await Navigator.push(
+                        context, MaterialPageRoute(builder: (context) {
+                          return ProductPage();
+                          },
+                    ));
+                  }
+                },
+                child: Container(
+                    margin: EdgeInsets.all(10), height:100 ,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.black),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Text(
+                        'select shops',
+                        style: Order_Style
+                    ),
+                    alignment: Alignment.center
+                ),
+              ),
+              GestureDetector(
+                onTap: () {
                   Navigator.push(
                       context, MaterialPageRoute(builder: (context) => ProductPage()));
                 },
                 child: Container(
-                    margin: EdgeInsets.all(10), width: 350, height:200 ,
-                    decoration: background_image('assets/images/coffee.jpg'),
+                    margin: EdgeInsets.all(10), height:100 ,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.black),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                     child: Text(
-                        'order',
-                        style: Default_title_Style
+                        'select product',
+                        style: Order_Style
                     ),
                     alignment: Alignment.center
                 ),

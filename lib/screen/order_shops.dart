@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -8,6 +6,7 @@ import 'package:flutter/material.dart';
 
 
 class Dialog extends StatelessWidget {
+  String shops = "";
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
@@ -20,7 +19,8 @@ class Dialog extends StatelessWidget {
         TextButton(
           child: const Text('選択'),
           onPressed: () {
-            Navigator.of(context).pop('JAVANICA latin coffee'); // ダイアログを閉じる
+            shops = 'JAVANICA latin coffee';
+            Navigator.of(context).pop(shops); // ダイアログを閉じる
           },
         ),
         TextButton(
@@ -81,12 +81,12 @@ class _OrderShopsPageState extends State<OrderShopsPage> with TickerProviderStat
                 point: LatLng(33.57453, 133.57860),
                 child: GestureDetector(
                   onTapDown: (tapPosition) async {
-                    await showDialog<void>(
+                    String shops_alert = await showDialog(
                         context: context,
                         builder: (_) {
                           return Dialog();
                         });
-                    Navigator.of(context).pop();
+                    Navigator.of(context).pop(shops_alert);
                   },
                   child: Container(
                     child: const Icon(
