@@ -26,6 +26,18 @@ const TextStyle Shopinfo = TextStyle(
     color: Colors.black
 );
 
+const TextStyle product_title = TextStyle(
+    fontWeight: FontWeight.bold,
+    fontSize: 16,
+    color: Colors.black
+);
+
+const TextStyle normal = TextStyle(
+    fontSize: 14,
+    color: Colors.black
+);
+
+
 //decoration_image
 
 BoxDecoration background_image(String imagePath) {
