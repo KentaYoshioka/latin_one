@@ -86,8 +86,8 @@ class _ProductPageState extends State<ProductPage> {
                       children: [
                         Image.asset(
                           menuItems[index]['photo']!,
-                          width: 100,
-                          height: 100,
+                          width: 50,
+                          height: 50,
                           fit: BoxFit.cover,
                         ),
                         Padding(
@@ -115,8 +115,14 @@ class _ProductPageState extends State<ProductPage> {
       ),
       floatingActionButton: _purchasedItems.isNotEmpty
           ? FloatingActionButton(
-        onPressed: () {
-          _showPurchasedItems();
+        onPressed: () async {
+          // _showPurchasedItems から戻ってきたデータを受け取る
+          final result = await _showPurchasedItems();
+
+          // 戻ってきたデータを使って処理を行う
+          if (result != null) {
+            Navigator.pop(context, result);             
+          }
         },
         child: Text('${_purchasedItems.length}件'),
       )
@@ -125,8 +131,8 @@ class _ProductPageState extends State<ProductPage> {
     );
   }
 
-  void _showPurchasedItems() {
-    showModalBottomSheet(
+  Future<List<Map<String, dynamic>>?> _showPurchasedItems() async {
+    return await showModalBottomSheet<List<Map<String, dynamic>>>(
       context: context,
       builder: (BuildContext context) {
         return DraggableScrollableSheet(
@@ -149,8 +155,8 @@ class _ProductPageState extends State<ProductPage> {
                               _purchasedItems.removeAt(index);
                             });
                             Navigator.pop(context);
-                          }
-                        )
+                          },
+                        ),
                       );
                     },
                   ),
@@ -160,6 +166,26 @@ class _ProductPageState extends State<ProductPage> {
                   child: Text(
                     '合計金額: ¥${_calculateTotalPrice().toStringAsFixed(2)}',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                ),
+                Align(
+                  alignment: Alignment.bottomRight,
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: ElevatedButton(
+                      onPressed: () {
+                        // 2. JSON形式のデータを Navigator.pop で返す
+                        final orderDetails = _purchasedItems.map((item) {
+                          return {
+                            'title': item['title'],
+                            'quantity': item['quantity'],
+                            'totalPrice': (item['quantity'] / 100 * double.parse(item['price'])).toStringAsFixed(2),
+                          };
+                        }).toList();
+                        Navigator.pop(context, orderDetails); // データを返す
+                      },
+                      child: Text('購入'),
+                    ),
                   ),
                 ),
               ],
