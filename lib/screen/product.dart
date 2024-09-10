@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import '../style.dart';
 
 class ProductPage extends StatefulWidget {
+  final bool isFromHomePage;
+  ProductPage({required this.isFromHomePage});
+
   @override
   _ProductPageState createState() => _ProductPageState();
 }
@@ -77,6 +80,7 @@ class _ProductPageState extends State<ProductPage> {
                             onOrderConfirmed: (quantity) {
                               _showOrderDetails(menuItems[index]['title']!, quantity, menuItems[index]['price']!);
                             },
+                            isFromHomePage: widget.isFromHomePage,  // フラグを渡す
                           ),
                         ),
                       );
@@ -121,7 +125,7 @@ class _ProductPageState extends State<ProductPage> {
 
           // 戻ってきたデータを使って処理を行う
           if (result != null) {
-            Navigator.pop(context, result);             
+            Navigator.pop(context, result);
           }
         },
         child: Text('${_purchasedItems.length}件'),
@@ -164,7 +168,7 @@ class _ProductPageState extends State<ProductPage> {
                 Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Text(
-                    '合計金額: ¥${_calculateTotalPrice().toStringAsFixed(2)}',
+                    '合計金額: ¥${_calculateTotalPrice().toInt()}',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                 ),
@@ -174,7 +178,6 @@ class _ProductPageState extends State<ProductPage> {
                     padding: const EdgeInsets.all(16.0),
                     child: ElevatedButton(
                       onPressed: () {
-                        // 2. JSON形式のデータを Navigator.pop で返す
                         final orderDetails = _purchasedItems.map((item) {
                           return {
                             'title': item['title'],
@@ -182,7 +185,7 @@ class _ProductPageState extends State<ProductPage> {
                             'totalPrice': (item['quantity'] / 100 * double.parse(item['price'])).toInt(),
                           };
                         }).toList();
-                        Navigator.pop(context, orderDetails); // データを返す
+                        Navigator.pop(context, orderDetails);
                       },
                       child: Text('購入'),
                     ),
@@ -198,6 +201,7 @@ class _ProductPageState extends State<ProductPage> {
 }
 
 class ProductScreen extends StatefulWidget {
+  final bool isFromHomePage;
   final String title;
   final String description;
   final String price;
@@ -210,6 +214,7 @@ class ProductScreen extends StatefulWidget {
     required this.price,
     required this.imagePath,
     required this.onOrderConfirmed,
+    required this.isFromHomePage,
   });
 
   @override
@@ -272,27 +277,29 @@ class _ProductScreenState extends State<ProductScreen> {
               style: TextStyle(fontSize: 16),
             ),
             SizedBox(height: 24),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  '数量を選択（100g単位）',
-                  style: TextStyle(fontSize: 16),
-                ),
-                QuantitySelector(
-                  initialQuantity: quantity,
-                  onQuantityChanged: (newQuantity) {
-                    setState(() {
-                      quantity = newQuantity;
-                    });
-                  },
-                ),
-              ],
-            ),
+            if (!widget.isFromHomePage)
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    '数量を選択（100g単位）',
+                    style: TextStyle(fontSize: 16),
+                  ),
+                  QuantitySelector(
+                    initialQuantity: quantity,
+                    onQuantityChanged: (newQuantity) {
+                      setState(() {
+                        quantity = newQuantity;
+                      });
+                    },
+                  ),
+                ],
+              ),
           ],
         ),
       ),
-      floatingActionButton: Container(
+      floatingActionButton: !widget.isFromHomePage
+          ? Container(
         width: 150,
         height: 50,
         child: ElevatedButton(
@@ -305,8 +312,8 @@ class _ProductScreenState extends State<ProductScreen> {
             style: TextStyle(fontSize: 16),
           ),
         ),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+      )
+          : null,
     );
   }
 }

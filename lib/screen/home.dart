@@ -33,13 +33,13 @@ class HomePage extends StatelessWidget {
               GestureDetector(
                 onTap: (){
                   Navigator.push(
-                      context, MaterialPageRoute(builder: (context) => ProductPage()));
+                      context, MaterialPageRoute(builder: (context) => ProductPage(isFromHomePage: true)));
                 },
                 child: Container(
                     margin: EdgeInsets.all(10), width: 350, height:200 ,
                     decoration: background_image('assets/images/IMG_8836.jpg'),
                     child: Text(
-                        'Product',
+                        'menu',
                         style: Default_title_Style
                     ),
                     alignment: Alignment.center
