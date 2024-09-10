@@ -19,7 +19,7 @@ class Dialog extends StatelessWidget {
         TextButton(
           child: const Text('選択'),
           onPressed: () {
-            shops = 'JAVANICA latin coffee';
+            shops = 'JAVANICA latin coffee\n 〒781-5101 高知県高知市布師田3061';
             Navigator.of(context).pop(shops); // ダイアログを閉じる
           },
         ),
