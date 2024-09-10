@@ -179,7 +179,7 @@ class _ProductPageState extends State<ProductPage> {
                           return {
                             'title': item['title'],
                             'quantity': item['quantity'],
-                            'totalPrice': (item['quantity'] / 100 * double.parse(item['price'])).toStringAsFixed(2),
+                            'totalPrice': (item['quantity'] / 100 * double.parse(item['price'])).toInt(),
                           };
                         }).toList();
                         Navigator.pop(context, orderDetails); // データを返す
