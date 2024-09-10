@@ -53,7 +53,7 @@ class _OrderPageState extends State<OrderPage> {
                   final product = await Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) {
-                      return ProductPage();
+                      return ProductPage(isFromHomePage: false);
                     }),
                   );
                   if (product != null) {
@@ -100,7 +100,7 @@ class _OrderPageState extends State<OrderPage> {
                 final product = await Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) {
-                    return ProductPage();
+                    return ProductPage(isFromHomePage: false);
                   }),
                 );
                 if (product != null) {
