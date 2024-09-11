@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:latin_one/screen/order_shops.dart';
 import 'package:latin_one/screen/product.dart';
+import 'package:flutter/services.dart';
+import '../style.dart';
 
 class OrderPage extends StatefulWidget {
   @override
@@ -13,10 +15,10 @@ class _OrderPageState extends State<OrderPage> {
 
   @override
   Widget build(BuildContext context) {
-    double totalAmount = products.fold(0, (sum, product) {
-      double price = (product['totalPrice'] is String)
-          ? double.parse(product['totalPrice'])
-          : product['totalPrice'] as double;
+    int totalAmount = products.fold(0, (sum, product) {
+      int price = (product['totalPrice'] is String)
+          ? int.parse(product['totalPrice'])
+          : product['totalPrice'] as int;
       return sum + price;
     });
 
@@ -246,9 +248,57 @@ class _OrderPageState extends State<OrderPage> {
               ),
             )
                 : SizedBox.shrink(),
+            shops.isNotEmpty && products.isNotEmpty ? GestureDetector(
+                onTap: () async {
+                  await Clipboard.setData(ClipboardData(
+                      text: "内容は作成中"),
+                  );
+                  await showDialog(
+                      context: context,
+                      builder: (_) {
+                        return ClipDialog();
+                      });
+                },
+              child: Align(
+                alignment: Alignment.center,  // Centerで中央揃え
+                child: Container(
+                  height: 50,
+                  width: 100, // 幅を指定
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    border: Border.all(
+                      color: Colors.brown,
+                      width: 2.0,
+                  ),
+                    borderRadius: BorderRadius.circular(10), // 枠線を丸くする
+                  ),
+                  alignment: Alignment.center, // テキストを中央に配置
+                  child: Text(
+                    'コピー',
+                    style: Order_Style,
+                  ),
+                ),
+              ),
+            )
+                : SizedBox.shrink(),
           ],
         ),
       ),
+    );
+  }
+}
+
+class ClipDialog extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Text('クリップボードにコピーしました。'),
+      actions: <Widget>[
+        TextButton(
+          child: const Text('OK'),
+          onPressed: () => Navigator.pop(context),
+        ),
+      ],
     );
   }
 }

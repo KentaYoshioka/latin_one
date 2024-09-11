@@ -10,7 +10,7 @@ class Dialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('JAVANICA latin coffee'),
+      title: const Text('JAVANICAN latin coffee'),
       content: Text(
         '〒781-5101\n 高知県高知市布師田3061\n',
         style: TextStyle(fontSize: 20.0),
@@ -19,7 +19,7 @@ class Dialog extends StatelessWidget {
         TextButton(
           child: const Text('選択'),
           onPressed: () {
-            shops = 'JAVANICA latin coffee\n 〒781-5101 高知県高知市布師田3061';
+            shops = 'JAVANICAN latin coffee\n 〒781-5101 高知県高知市布師田3061';
             Navigator.of(context).pop(shops); // ダイアログを閉じる
           },
         ),
