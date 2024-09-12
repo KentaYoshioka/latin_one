@@ -8,7 +8,7 @@ const TextStyle Default_title_Style = TextStyle(
   color: Colors.white,
 );
 
-const TextStyle Order_Style = TextStyle(
+const Order_Style = TextStyle(
   fontWeight: FontWeight.bold,
   fontSize: 24,
   color: Colors.black,
@@ -26,7 +26,7 @@ const TextStyle Shopinfo = TextStyle(
     color: Colors.black
 );
 
-const TextStyle product_title = TextStyle(
+const product_title = TextStyle(
     fontWeight: FontWeight.bold,
     fontSize: 16,
     color: Colors.black
