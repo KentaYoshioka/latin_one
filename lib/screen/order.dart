@@ -22,6 +22,17 @@ class _OrderPageState extends State<OrderPage> {
       return sum + price;
     });
 
+    // shopsとproductsの情報をクリップボードにコピーするためのテキスト生成
+    String clipboardText = '';
+    if (shops.isNotEmpty && products.isNotEmpty) {
+      clipboardText = '$shops\n\n';
+      products.forEach((product) {
+        clipboardText +=
+        '\n${product['title']} - ${product['quantity']}g - ¥${product['totalPrice']}\n';
+      });
+      clipboardText += '\nTotal: ¥$totalAmount';
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -97,8 +108,7 @@ class _OrderPageState extends State<OrderPage> {
 
             // プロダクト選択
             GestureDetector(
-              onTap: shops.isNotEmpty
-                  ? () async {
+              onTap: shops.isNotEmpty ? () async {
                 final product = await Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) {
@@ -191,7 +201,8 @@ class _OrderPageState extends State<OrderPage> {
                       return Padding(
                         padding: const EdgeInsets.symmetric(vertical: 8.0),
                         child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          mainAxisAlignment:
+                          MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
                               product['title'],
@@ -248,31 +259,32 @@ class _OrderPageState extends State<OrderPage> {
               ),
             )
                 : SizedBox.shrink(),
+
+            // コピー用のGestureDetector
             shops.isNotEmpty && products.isNotEmpty ? GestureDetector(
-                onTap: () async {
-                  await Clipboard.setData(ClipboardData(
-                      text: "内容は作成中"),
-                  );
-                  await showDialog(
-                      context: context,
-                      builder: (_) {
-                        return ClipDialog();
-                      });
-                },
+              onTap: () async {
+                await Clipboard.setData(ClipboardData(text: clipboardText));
+                await showDialog(
+                  context: context,
+                  builder: (_) {
+                    return ClipDialog();
+                  },
+                );
+              },
               child: Align(
-                alignment: Alignment.center,  // Centerで中央揃え
+                alignment: Alignment.center,
                 child: Container(
                   height: 50,
-                  width: 100, // 幅を指定
+                  width: 100,
                   decoration: BoxDecoration(
                     color: Colors.white,
                     border: Border.all(
                       color: Colors.brown,
                       width: 2.0,
+                    ),
+                    borderRadius: BorderRadius.circular(10),
                   ),
-                    borderRadius: BorderRadius.circular(10), // 枠線を丸くする
-                  ),
-                  alignment: Alignment.center, // テキストを中央に配置
+                  alignment: Alignment.center,
                   child: Text(
                     'コピー',
                     style: Order_Style,
