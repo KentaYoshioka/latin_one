@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../style.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ProductPage extends StatefulWidget {
   final bool isFromHomePage;
@@ -10,14 +11,23 @@ class ProductPage extends StatefulWidget {
 }
 
 class _ProductPageState extends State<ProductPage> {
-  final List<Map<String, String>> menuItems = [
-    {'title': 'メニュー1', 'description': 'これはメニュー1の画面です', 'price': '500', 'photo': 'assets/images/coffee.jpg' },
-    {'title': 'メニュー2', 'description': 'これはメニュー2の画面です', 'price': '500', 'photo': 'assets/images/coffee.jpg'},
-    {'title': 'メニュー3', 'description': 'これはメニュー3の画面です', 'price': '500', 'photo': 'assets/images/coffee.jpg'},
-    {'title': 'メニュー4', 'description': 'これはメニュー4の画面です', 'price': '500', 'photo': 'assets/images/coffee.jpg' },
-    {'title': 'メニュー5', 'description': 'これはメニュー5の画面です', 'price': '500', 'photo': 'assets/images/coffee.jpg'},
-    {'title': 'メニュー6', 'description': 'これはメニュー6の画面です', 'price': '500', 'photo': 'assets/images/coffee.jpg'},
-  ];
+  List<dynamic> menuItems = [];
+  final supabase = Supabase.instance.client;
+
+  Future<void> fetchMenu() async {
+    final response = await supabase
+        .from('products')
+        .select();
+
+    setState(() {
+      menuItems = response as List<dynamic>;
+    });
+  }
+
+  void initState() {
+    super.initState();
+    fetchMenu();
+  }
 
   List<Map<String, dynamic>> _purchasedItems = [];
 
@@ -75,10 +85,10 @@ class _ProductPageState extends State<ProductPage> {
                           builder: (context) => ProductScreen(
                             title: menuItems[index]['title']!,
                             description: menuItems[index]['description']!,
-                            price: menuItems[index]['price']!,
-                            imagePath: menuItems[index]['photo']!,
+                            price: menuItems[index]['price']!.toString(),
+                            imagePath: 'assets/images/coffee.jpg',
                             onOrderConfirmed: (quantity) {
-                              _showOrderDetails(menuItems[index]['title']!, quantity, menuItems[index]['price']!);
+                              _showOrderDetails(menuItems[index]['title']!, quantity, menuItems[index]['price'].toString());
                             },
                             isFromHomePage: widget.isFromHomePage,  // フラグを渡す
                           ),
@@ -89,7 +99,7 @@ class _ProductPageState extends State<ProductPage> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Image.asset(
-                          menuItems[index]['photo']!,
+                          'assets/images/coffee.jpg',
                           width: 50,
                           height: 50,
                           fit: BoxFit.cover,
