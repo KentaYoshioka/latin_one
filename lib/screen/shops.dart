@@ -8,6 +8,8 @@ import 'shopinfo.dart';
 
 
 class ShopsPage extends StatefulWidget {
+  const ShopsPage({super.key});
+
   @override
   State<ShopsPage> createState() => _ShopsPageState();
 }
@@ -21,7 +23,7 @@ class _ShopsPageState extends State<ShopsPage> with TickerProviderStateMixin {
       builder: (context) =>
           AlertDialog(
             title: const Text('JAVANICA latin coffee'),
-            content: Text(
+            content: const Text(
               '〒781-5101\n 高知県高知市布師田3061\n',
               style: TextStyle(fontSize: 20.0),
             ),
@@ -29,10 +31,10 @@ class _ShopsPageState extends State<ShopsPage> with TickerProviderStateMixin {
               TextButton(
                 child: const Text('詳細'),
                 onPressed: () {
-                  Navigator.of(context).pop(); // ダイアログを閉じる
+                  Navigator.of(context).pop();
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => ShopInfoPage()),
+                    MaterialPageRoute(builder: (context) => const ShopInfoPage()),
                   );
                 },
               ),
@@ -49,14 +51,12 @@ class _ShopsPageState extends State<ShopsPage> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('〒781-5101 高知県高知市布師田3061',
+        title: const Text('〒781-5101 高知県高知市布師田3061',
           style: TextStyle(fontSize: 16.0),),
       ),
       body: FlutterMap(
-        // mapControllerをFlutterMapに指定
         mapController: _animatedMapController.mapController,
-        options: MapOptions(
-          // Latin coffeeの緯度経度です。
+        options: const MapOptions(
           initialCenter: LatLng(33.57453, 133.57860),
           initialZoom: 15,
           minZoom: 10,
@@ -82,22 +82,17 @@ class _ShopsPageState extends State<ShopsPage> with TickerProviderStateMixin {
               Marker(
                 width: 30.0,
                 height: 30.0,
-                // ピンの位置を設定
-                point: LatLng(33.57453, 133.57860),
+                point: const LatLng(33.57453, 133.57860),
                 child: GestureDetector(
                   onTapDown: (tapPosition) {
-                    _showAlert(); // タップした位置でアラートを表示
+                    _showAlert();
                   },
-                  child: Container(
-                    child: const Icon(
-                      Icons.location_on,
-                      color: Colors.red,
-                      size: 30,
-                    ),
+                  child: const Icon(
+                    Icons.location_on,
+                    color: Colors.red,
+                    size: 30,
                   ),
                 ),
-                // マップを回転させた時にピンも回転するのが rotate: false,
-                // マップを回転させた時にピンは常に同じ向きなのが rotate: true,
                 rotate: true,
               ),
             ],

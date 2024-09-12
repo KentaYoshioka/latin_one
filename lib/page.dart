@@ -18,9 +18,9 @@ class Page extends StatefulWidget {
 class Pages extends State<Page> {
   int _selectedIndex = 0;
   final _pageWidgets = [
-    HomePage(),
-    ShopsPage(),
-    OrderPage(),
+    const HomePage(),
+    const ShopsPage(),
+    const OrderPage(),
   ];
   void onItemTapped(int index) => setState(() => _selectedIndex = index );
 
@@ -52,7 +52,7 @@ class Pages extends State<Page> {
               leading: InkWell(
                 onTap: () {
                   Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => InboxPage()));
+                      MaterialPageRoute(builder: (context) => const InboxPage()));
                 },
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,

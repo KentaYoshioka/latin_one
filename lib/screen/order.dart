@@ -5,6 +5,8 @@ import 'package:flutter/services.dart';
 import '../style.dart';
 
 class OrderPage extends StatefulWidget {
+  const OrderPage({super.key});
+
   @override
   State<OrderPage> createState() => _OrderPageState();
 }
@@ -26,16 +28,16 @@ class _OrderPageState extends State<OrderPage> {
     String clipboardText = '';
     if (shops.isNotEmpty && products.isNotEmpty) {
       clipboardText = '$shops\n\n';
-      products.forEach((product) {
+      for (var product in products) {
         clipboardText +=
         '\n${product['title']} - ${product['quantity']}g - ¥${product['totalPrice']}\n';
-      });
+      }
       clipboardText += '\nTotal: ¥$totalAmount';
     }
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           'Order',
           style: TextStyle(
             color: Colors.white,
@@ -47,7 +49,7 @@ class _OrderPageState extends State<OrderPage> {
       ),
       body: Container(
         color: Colors.brown[50], // 背景を柔らかい色に変更
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         child: ListView(
           children: [
             // ショップ選択
@@ -56,7 +58,7 @@ class _OrderPageState extends State<OrderPage> {
                 final shopinfo = await Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) {
-                    return OrderShopsPage();
+                    return const OrderShopsPage();
                   }),
                 );
                 if (shopinfo != null) {
@@ -66,7 +68,7 @@ class _OrderPageState extends State<OrderPage> {
                   final product = await Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) {
-                      return ProductPage(isFromHomePage: false);
+                      return const ProductPage(isFromHomePage: false);
                     }),
                   );
                   if (product != null) {
@@ -77,21 +79,21 @@ class _OrderPageState extends State<OrderPage> {
                 }
               },
               child: Card(
-                margin: EdgeInsets.symmetric(vertical: 10),
+                margin: const EdgeInsets.symmetric(vertical: 10),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(15),
                 ),
                 elevation: 4,
                 child: Container(
-                  padding: EdgeInsets.all(16),
-                  decoration: BoxDecoration(
+                  padding: const EdgeInsets.all(16),
+                  decoration: const BoxDecoration(
                     color: Colors.white,
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Icon(Icons.store, size: 40, color: Colors.green[600]),
-                      SizedBox(width: 10),
+                      const SizedBox(width: 10),
                       Text(
                         'Select Shops',
                         style: TextStyle(
@@ -112,7 +114,7 @@ class _OrderPageState extends State<OrderPage> {
                 final product = await Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) {
-                    return ProductPage(isFromHomePage: false);
+                    return const ProductPage(isFromHomePage: false);
                   }),
                 );
                 if (product != null) {
@@ -123,13 +125,13 @@ class _OrderPageState extends State<OrderPage> {
               }
                   : null,
               child: Card(
-                margin: EdgeInsets.symmetric(vertical: 10),
+                margin:  const EdgeInsets.symmetric(vertical: 10),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(15),
                 ),
                 elevation: 4,
                 child: Container(
-                  padding: EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
                     color: shops.isNotEmpty ? Colors.white : Colors.grey[300],
                   ),
@@ -141,7 +143,7 @@ class _OrderPageState extends State<OrderPage> {
                         size: 40,
                         color: shops.isNotEmpty ? Colors.green : Colors.grey,
                       ),
-                      SizedBox(width: 10),
+                      const SizedBox(width: 10),
                       Text(
                         'Select Product',
                         style: TextStyle(
@@ -158,16 +160,15 @@ class _OrderPageState extends State<OrderPage> {
               ),
             ),
 
-            // 選択されたショップの表示
             shops.isNotEmpty ? Card(
-              margin: EdgeInsets.symmetric(vertical: 10),
+              margin: const EdgeInsets.symmetric(vertical: 10),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(15),
               ),
               elevation: 4,
               child: Container(
-                padding: EdgeInsets.all(16),
-                decoration: BoxDecoration(
+                padding: const EdgeInsets.all(16),
+                decoration: const BoxDecoration(
                   color: Colors.white,
                 ),
                 child: Text(
@@ -180,23 +181,22 @@ class _OrderPageState extends State<OrderPage> {
                 ),
               ),
             )
-                : SizedBox.shrink(),
+                : const SizedBox.shrink(),
 
             // 選択された商品のリスト
             products.isNotEmpty ? Card(
-              margin: EdgeInsets.symmetric(vertical: 10),
+              margin: const EdgeInsets.symmetric(vertical: 10),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(15),
               ),
               elevation: 4,
               child: Container(
-                padding: EdgeInsets.all(16),
-                decoration: BoxDecoration(
+                padding: const EdgeInsets.all(16),
+                decoration: const BoxDecoration(
                   color: Colors.white,
                 ),
                 child: Column(
                   children: [
-                    // 各商品のtitleとtotalPriceを表示
                     ...products.map((product) {
                       return Padding(
                         padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -228,11 +228,10 @@ class _OrderPageState extends State<OrderPage> {
                           ],
                         ),
                       );
-                    }).toList(),
+                    }),
 
-                    Divider(),
+                    const Divider(),
 
-                    // totalPriceの合計を表示
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -258,7 +257,7 @@ class _OrderPageState extends State<OrderPage> {
                 ),
               ),
             )
-                : SizedBox.shrink(),
+                : const SizedBox.shrink(),
 
             // コピー用のGestureDetector
             shops.isNotEmpty && products.isNotEmpty ? GestureDetector(
@@ -267,7 +266,7 @@ class _OrderPageState extends State<OrderPage> {
                 await showDialog(
                   context: context,
                   builder: (_) {
-                    return ClipDialog();
+                    return  const ClipDialog();
                   },
                 );
               },
@@ -285,14 +284,14 @@ class _OrderPageState extends State<OrderPage> {
                     borderRadius: BorderRadius.circular(10),
                   ),
                   alignment: Alignment.center,
-                  child: Text(
+                  child: const Text(
                     'コピー',
                     style: Order_Style,
                   ),
                 ),
               ),
             )
-                : SizedBox.shrink(),
+                : const SizedBox.shrink(),
           ],
         ),
       ),
@@ -301,6 +300,8 @@ class _OrderPageState extends State<OrderPage> {
 }
 
 class ClipDialog extends StatelessWidget {
+  const ClipDialog({super.key});
+
   @override
   Widget build(BuildContext context) {
     return AlertDialog(

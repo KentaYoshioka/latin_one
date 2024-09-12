@@ -4,7 +4,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ProductPage extends StatefulWidget {
   final bool isFromHomePage;
-  ProductPage({required this.isFromHomePage});
+  const ProductPage({super.key, required this.isFromHomePage});
 
   @override
   _ProductPageState createState() => _ProductPageState();
@@ -24,12 +24,13 @@ class _ProductPageState extends State<ProductPage> {
     });
   }
 
+  @override
   void initState() {
     super.initState();
     fetchMenu();
   }
 
-  List<Map<String, dynamic>> _purchasedItems = [];
+  final List<Map<String, dynamic>> _purchasedItems = [];
 
   double _calculateTotalPrice() {
     double totalPrice = 0;
@@ -57,7 +58,7 @@ class _ProductPageState extends State<ProductPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('メニュー'),
+        title: const Text('メニュー'),
       ),
       body: Column(
         children: [
@@ -70,7 +71,7 @@ class _ProductPageState extends State<ProductPage> {
           ),
           Expanded(
             child: GridView.builder(
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 3,
                 childAspectRatio: 0.95,
               ),
@@ -90,7 +91,7 @@ class _ProductPageState extends State<ProductPage> {
                             onOrderConfirmed: (quantity) {
                               _showOrderDetails(menuItems[index]['title']!, quantity, menuItems[index]['price'].toString());
                             },
-                            isFromHomePage: widget.isFromHomePage,  // フラグを渡す
+                            isFromHomePage: widget.isFromHomePage,
                           ),
                         ),
                       );
@@ -130,10 +131,8 @@ class _ProductPageState extends State<ProductPage> {
       floatingActionButton: _purchasedItems.isNotEmpty
           ? FloatingActionButton(
         onPressed: () async {
-          // _showPurchasedItems から戻ってきたデータを受け取る
           final result = await _showPurchasedItems();
 
-          // 戻ってきたデータを使って処理を行う
           if (result != null) {
             Navigator.pop(context, result);
           }
@@ -163,7 +162,7 @@ class _ProductPageState extends State<ProductPage> {
                         title: Text(_purchasedItems[index]['title']),
                         subtitle: Text('数量: ${_purchasedItems[index]['quantity']}g'),
                         trailing: IconButton(
-                          icon: Icon(Icons.remove_circle_outline, color: Colors.red),
+                          icon: const Icon(Icons.remove_circle_outline, color: Colors.red),
                           onPressed: () {
                             setState(() {
                               _purchasedItems.removeAt(index);
@@ -179,7 +178,7 @@ class _ProductPageState extends State<ProductPage> {
                   padding: const EdgeInsets.all(16.0),
                   child: Text(
                     '合計金額: ¥${_calculateTotalPrice().toInt()}',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                 ),
                 Align(
@@ -197,7 +196,7 @@ class _ProductPageState extends State<ProductPage> {
                         }).toList();
                         Navigator.pop(context, orderDetails);
                       },
-                      child: Text('購入'),
+                      child: const Text('購入'),
                     ),
                   ),
                 ),
@@ -218,7 +217,7 @@ class ProductScreen extends StatefulWidget {
   final String imagePath;
   final void Function(int quantity) onOrderConfirmed;
 
-  ProductScreen({
+  const ProductScreen({super.key,
     required this.title,
     required this.description,
     required this.price,
@@ -256,7 +255,7 @@ class _ProductScreenState extends State<ProductScreen> {
                     height: 150,
                   ),
                 ),
-                SizedBox(width: 16),
+                const SizedBox(width: 16),
                 Expanded(
                   flex: 3,
                   child: Column(
@@ -264,9 +263,9 @@ class _ProductScreenState extends State<ProductScreen> {
                     children: [
                       Text(
                         widget.title,
-                        style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                        style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                       ),
-                      SizedBox(height: 8),
+                      const SizedBox(height: 8),
                       Text(
                         '価格: ¥${widget.price}',
                         style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.green[700]),
@@ -276,22 +275,22 @@ class _ProductScreenState extends State<ProductScreen> {
                 ),
               ],
             ),
-            SizedBox(height: 16),
-            Text(
+            const SizedBox(height: 16),
+            const Text(
               '商品説明',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Text(
               widget.description,
-              style: TextStyle(fontSize: 16),
+              style: const TextStyle(fontSize: 16),
             ),
-            SizedBox(height: 24),
+            const SizedBox(height: 24),
             if (!widget.isFromHomePage)
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
+                  const Text(
                     '数量を選択（100g単位）',
                     style: TextStyle(fontSize: 16),
                   ),
@@ -309,7 +308,7 @@ class _ProductScreenState extends State<ProductScreen> {
         ),
       ),
       floatingActionButton: !widget.isFromHomePage
-          ? Container(
+          ? SizedBox(
         width: 150,
         height: 50,
         child: ElevatedButton(
@@ -317,7 +316,7 @@ class _ProductScreenState extends State<ProductScreen> {
             widget.onOrderConfirmed(quantity);
             Navigator.pop(context);
           },
-          child: Text(
+          child: const Text(
             '決定する',
             style: TextStyle(fontSize: 16),
           ),
@@ -332,7 +331,7 @@ class QuantitySelector extends StatefulWidget {
   final int initialQuantity;
   final ValueChanged<int> onQuantityChanged;
 
-  QuantitySelector({
+  const QuantitySelector({super.key,
     required this.initialQuantity,
     required this.onQuantityChanged,
   });
@@ -355,7 +354,7 @@ class _QuantitySelectorState extends State<QuantitySelector> {
     return Row(
       children: [
         IconButton(
-          icon: Icon(Icons.remove),
+          icon: const Icon(Icons.remove),
           onPressed: () {
             setState(() {
               if (quantity > 100) quantity -= 100;
@@ -365,7 +364,7 @@ class _QuantitySelectorState extends State<QuantitySelector> {
         ),
         Text('$quantity g'),
         IconButton(
-          icon: Icon(Icons.add),
+          icon: const Icon(Icons.add),
           onPressed: () {
             setState(() {
               quantity += 100;

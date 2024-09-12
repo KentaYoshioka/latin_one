@@ -7,12 +7,12 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: '.env');
   await Supabase.initialize(
-    url: '${dotenv.get('SUPABASE_URL')}',
-    anonKey: '${dotenv.get('SUPABASE_KEY')}',
+    url: dotenv.get('SUPABASE_URL'),
+    anonKey: dotenv.get('SUPABASE_KEY'),
   );
-  runApp(MaterialApp(
+  runApp(const MaterialApp(
           title: 'LatinOne',
-          home: const page.Page(title: 'LatinOne'),
+          home: page.Page(title: 'LatinOne'),
       ));
 }
 final supabase = Supabase.instance.client;

@@ -5,13 +5,21 @@ import 'package:flutter_map_animations/flutter_map_animations.dart';
 import 'package:flutter/material.dart';
 
 
-class Dialog extends StatelessWidget {
+class Dialog extends StatefulWidget {
+  const Dialog({super.key});
+
+  @override
+  State<Dialog> createState() => _DialogState();
+}
+
+class _DialogState extends State<Dialog> {
   String shops = "";
+
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
       title: const Text('JAVANICAN latin coffee'),
-      content: Text(
+      content: const Text(
         '〒781-5101\n 高知県高知市布師田3061\n',
         style: TextStyle(fontSize: 20.0),
       ),
@@ -33,6 +41,8 @@ class Dialog extends StatelessWidget {
 }
 
 class OrderShopsPage extends StatefulWidget {
+  const OrderShopsPage({super.key});
+
   @override
   State<OrderShopsPage> createState() => _OrderShopsPageState();
 }
@@ -44,13 +54,13 @@ class _OrderShopsPageState extends State<OrderShopsPage> with TickerProviderStat
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('〒781-5101 高知県高知市布師田3061',
+        title: const Text('〒781-5101 高知県高知市布師田3061',
           style: TextStyle(fontSize: 16.0),),
       ),
       body: FlutterMap(
         // mapControllerをFlutterMapに指定
         mapController: _animatedMapController.mapController,
-        options: MapOptions(
+        options: const MapOptions(
           // Latin coffeeの緯度経度です。
           initialCenter: LatLng(33.57453, 133.57860),
           initialZoom: 15,
@@ -77,23 +87,20 @@ class _OrderShopsPageState extends State<OrderShopsPage> with TickerProviderStat
               Marker(
                 width: 30.0,
                 height: 30.0,
-                // ピンの位置を設定
-                point: LatLng(33.57453, 133.57860),
+                point: const LatLng(33.57453, 133.57860),
                 child: GestureDetector(
                   onTapDown: (tapPosition) async {
-                    String shops_alert = await showDialog(
+                    String shopsAlert = await showDialog(
                         context: context,
                         builder: (_) {
                           return Dialog();
                         });
-                    Navigator.of(context).pop(shops_alert);
+                    Navigator.of(context).pop(shopsAlert);
                   },
-                  child: Container(
-                    child: const Icon(
-                      Icons.location_on,
-                      color: Colors.red,
-                      size: 30,
-                    ),
+                  child: const Icon(
+                    Icons.location_on,
+                    color: Colors.red,
+                    size: 30,
                   ),
                 ),
                 // マップを回転させた時にピンも回転するのが rotate: false,

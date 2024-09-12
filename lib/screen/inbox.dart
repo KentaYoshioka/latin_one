@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 
 class InboxPage extends StatelessWidget {
+  const InboxPage({super.key});
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Inbox'),
+        title: const Text('Inbox'),
       ),
       body: Container(
-        padding: EdgeInsets.all(32.0),
-        child: Center(
+        padding: const EdgeInsets.all(32.0),
+        child: const Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
