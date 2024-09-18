@@ -48,11 +48,10 @@ class _OrderPageState extends State<OrderPage> {
         elevation: 0,
       ),
       body: Container(
-        color: Colors.brown[50], // 背景を柔らかい色に変更
+        color: Colors.brown[50],
         padding: const EdgeInsets.all(16.0),
         child: ListView(
           children: [
-            // ショップ選択
             GestureDetector(
               onTap: () async {
                 final shopinfo = await Navigator.push(
@@ -119,7 +118,7 @@ class _OrderPageState extends State<OrderPage> {
                 );
                 if (product != null) {
                   setState(() {
-                    products = product;
+                    addOrUpdateProducts(products, product);
                   });
                 }
               }
@@ -225,6 +224,14 @@ class _OrderPageState extends State<OrderPage> {
                                 color: Colors.green[700],
                               ),
                             ),
+                            IconButton(
+                              icon: Icon(Icons.remove_circle_outline, color: Colors.red[700]),
+                              onPressed: () {
+                                setState(() {
+                                  products.remove(product);
+                                });
+                              },
+                            ),
                           ],
                         ),
                       );
@@ -315,3 +322,21 @@ class ClipDialog extends StatelessWidget {
     );
   }
 }
+
+void addOrUpdateProducts(List<Map<String, dynamic>> existingProducts, List<Map<String, dynamic>> newProducts) {
+  for (var newProduct in newProducts) {
+    var existingProduct = existingProducts.firstWhere(
+          (existingProduct) => existingProduct['title'] == newProduct['title'],
+      orElse: () => {},
+    );
+
+    if (existingProduct.isNotEmpty) {
+      existingProduct['quantity'] += newProduct['quantity'];
+      existingProduct['totalPrice'] += newProduct['totalPrice'];
+    } else {
+      existingProducts.add(newProduct);
+    }
+  }
+}
+
+
