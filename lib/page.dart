@@ -66,7 +66,10 @@ class Pages extends State<Page> {
                 ),
               ),
             ),
-            body: _pageWidgets.elementAt(_selectedIndex),
+            body: IndexedStack(
+              index: _selectedIndex,
+              children: _pageWidgets,
+            ),
             bottomNavigationBar: BottomNavigationBar(
               currentIndex: _selectedIndex,
               onTap: onItemTapped,
