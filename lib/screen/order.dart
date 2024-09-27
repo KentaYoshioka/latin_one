@@ -192,34 +192,43 @@ class _OrderPageState extends State<OrderPage> {
                           mainAxisAlignment:
                           MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(
-                              product['title'],
-                              style: TextStyle(
-                                fontSize: 18,
-                                color: Colors.brown[700],
-                              ),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  product['title'],
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.brown[700],
+                                  ),
+                                ),
+                                Text(
+                                  '${product['quantity']}g',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.brown[700],
+                                  ),
+                                ),
+                              ],
                             ),
-                            Text(
-                              '${product['quantity']}g',
-                              style: TextStyle(
-                                fontSize: 18,
-                                color: Colors.brown[700],
-                              ),
-                            ),
-                            Text(
-                              '¥${product['totalPrice']}',
-                              style: TextStyle(
-                                fontSize: 18,
-                                color: Colors.green[700],
-                              ),
-                            ),
-                            IconButton(
-                              icon: Icon(Icons.remove_circle_outline, color: Colors.red[700]),
-                              onPressed: () {
-                                setState(() {
-                                  products.remove(product);
-                                });
-                              },
+                            Row(
+                              children: [
+                                Text(
+                                  '¥${product['totalPrice']}',
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    color: Colors.green[700],
+                                  ),
+                                ),
+                                IconButton(
+                                  icon: Icon(Icons.remove_circle_outline, color: Colors.red[700]),
+                                  onPressed: () {
+                                    setState(() {
+                                      products.remove(product);
+                                    });
+                                  },
+                                ),
+                              ],
                             ),
                           ],
                         ),
