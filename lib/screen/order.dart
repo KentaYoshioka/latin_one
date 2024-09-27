@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:latin_one/screen/order_shops.dart';
 import 'package:latin_one/screen/product.dart';
-import 'package:flutter/services.dart';
+import 'package:latin_one/screen/personal_info_form.dart';
 import '../style.dart';
 
 class OrderPage extends StatefulWidget {
@@ -23,17 +23,6 @@ class _OrderPageState extends State<OrderPage> {
           : product['totalPrice'] as int;
       return sum + price;
     });
-
-    // shopsとproductsの情報をクリップボードにコピーするためのテキスト生成
-    String clipboardText = '';
-    if (shops.isNotEmpty && products.isNotEmpty) {
-      clipboardText = '$shops\n\n';
-      for (var product in products) {
-        clipboardText +=
-        '\n${product['title']} - ${product['quantity']}g - ¥${product['totalPrice']}\n';
-      }
-      clipboardText += '\nTotal: ¥$totalAmount';
-    }
 
     return Scaffold(
       appBar: AppBar(
@@ -266,22 +255,24 @@ class _OrderPageState extends State<OrderPage> {
             )
                 : const SizedBox.shrink(),
 
-            // コピー用のGestureDetector
+            // クリップボードの処理を削除し、個人情報入力フォームへ遷移
             shops.isNotEmpty && products.isNotEmpty ? GestureDetector(
-              onTap: () async {
-                await Clipboard.setData(ClipboardData(text: clipboardText));
-                await showDialog(
-                  context: context,
-                  builder: (_) {
-                    return  const ClipDialog();
-                  },
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => PersonalInfoForm(
+                      products: products,
+                      totalAmount: totalAmount,
+                    ),
+                  ),
                 );
               },
               child: Align(
                 alignment: Alignment.center,
                 child: Container(
                   height: 50,
-                  width: 100,
+                  width: 350,
                   decoration: BoxDecoration(
                     color: Colors.white,
                     border: Border.all(
@@ -292,7 +283,7 @@ class _OrderPageState extends State<OrderPage> {
                   ),
                   alignment: Alignment.center,
                   child: const Text(
-                    'コピー',
+                    '個人情報入力フォームへ',
                     style: Order_Style,
                   ),
                 ),
@@ -302,23 +293,6 @@ class _OrderPageState extends State<OrderPage> {
           ],
         ),
       ),
-    );
-  }
-}
-
-class ClipDialog extends StatelessWidget {
-  const ClipDialog({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return AlertDialog(
-      title: const Text('クリップボードにコピーしました。'),
-      actions: <Widget>[
-        TextButton(
-          child: const Text('OK'),
-          onPressed: () => Navigator.pop(context),
-        ),
-      ],
     );
   }
 }

@@ -54,7 +54,7 @@ class _OrderShopsPageState extends State<OrderShopsPage> with TickerProviderStat
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('〒781-5101 高知県高知市布師田3061',
+        title: const Text('JAVANICAN latin coffee',
           style: TextStyle(fontSize: 16.0),),
       ),
       body: FlutterMap(
