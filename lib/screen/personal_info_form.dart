@@ -1,5 +1,9 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:http/http.dart';
+import 'package:email_validator/email_validator.dart';
+
 import './order.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -19,6 +23,7 @@ class _PersonalInfoFormState extends State<PersonalInfoForm> {
   final TextEditingController _postalCodeController = TextEditingController();
   final TextEditingController _addressController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
+  bool _isPostalCodeEntered = false;
 
   @override
   void initState() {
@@ -44,10 +49,41 @@ class _PersonalInfoFormState extends State<PersonalInfoForm> {
     );
   }
 
+  Future<String?> zipCodeToAddress(String zipCode) async {
+    if (zipCode.length != 7) {
+      return null;
+    }
+    final response = await get(
+      Uri.parse(
+        'https://zipcloud.ibsnet.co.jp/api/search?zipcode=$zipCode',
+      ),
+    );
+    if (response.statusCode != 200) {
+      return null;
+    }
+    final result = jsonDecode(response.body);
+    if (result['results'] == null) {
+      return null;
+    }
+    final addressMap = (result['results'] as List).first;
+    final address = '${addressMap['address1']} ${addressMap['address2']} ${addressMap['address3']}';
+    return address;
+  }
+
+  String? _errorMessage;
+
   Future<void> _searchAddress() async {
-    // ここで郵便番号から住所を検索する処理を実装予定
+    String? address = await zipCodeToAddress(_postalCodeController.text);
     setState(() {
-      _addressController.text = 'ここで郵便番号から住所を検索する処理を実装予定';  // 例として、固定値
+      if (address != null) {
+        _addressController.text = address;
+        _isPostalCodeEntered = true;
+        _errorMessage = null;
+      } else {
+        _addressController.text = '';
+        _isPostalCodeEntered = false;
+        _errorMessage = '郵便番号が正しくありません';
+      }
     });
   }
 
@@ -115,6 +151,7 @@ class _PersonalInfoFormState extends State<PersonalInfoForm> {
                   }
                   return null;
                 },
+                enabled: _isPostalCodeEntered,
               ),
               TextFormField(
                 controller: _emailController,
@@ -123,9 +160,20 @@ class _PersonalInfoFormState extends State<PersonalInfoForm> {
                   if (value == null || value.isEmpty) {
                     return 'メールアドレスを入力してください';
                   }
+                  if (!EmailValidator.validate(value)) {
+                    return '有効なメールアドレスを入力してください';
+                  }
                   return null;
                 },
               ),
+              if (_errorMessage != null) // エラーメッセージを表示する条件
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: Text(
+                    _errorMessage!,
+                    style: TextStyle(color: Colors.red),
+                  ),
+                ),
               const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () async {
