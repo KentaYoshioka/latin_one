@@ -11,9 +11,11 @@ class OrderPage extends StatefulWidget {
   State<OrderPage> createState() => _OrderPageState();
 }
 
+List<Map<String, dynamic>> products = [];
+
 class _OrderPageState extends State<OrderPage> {
   String shops = '';
-  List<Map<String, dynamic>> products = [];
+
 
   @override
   Widget build(BuildContext context) {
@@ -270,12 +272,15 @@ class _OrderPageState extends State<OrderPage> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => PersonalInfoForm(
-                      products: products,
-                      totalAmount: totalAmount,
-                    ),
+                    builder: (context) =>
+                        PersonalInfoForm(
+                          products: products,
+                          totalAmount: totalAmount,
+                        ),
                   ),
-                );
+                ).then((_) {
+                  setState(() {});
+                });
               },
               child: Align(
                 alignment: Alignment.center,
@@ -321,5 +326,6 @@ void addOrUpdateProducts(List<Map<String, dynamic>> existingProducts, List<Map<S
     }
   }
 }
+
 
 

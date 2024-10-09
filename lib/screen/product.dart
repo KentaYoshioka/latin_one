@@ -40,7 +40,6 @@ class _ProductPageState extends State<ProductPage> {
     }
     return totalPrice;
   }
-
   void _showOrderDetails(String title, int quantity, String price) {
     int index = _purchasedItems.indexWhere((item) => item['title'] == title);
     if (index >= 0) {
@@ -56,83 +55,112 @@ class _ProductPageState extends State<ProductPage> {
 
   @override
   Widget build(BuildContext context) {
+    Map<String, List<dynamic>> attributeGroupedItems = {};
+    for (var item in menuItems) {
+      String attribute = item['attribute'];  // 属性に基づく
+      if (!attributeGroupedItems.containsKey(attribute)) {
+        attributeGroupedItems[attribute] = [];
+      }
+      attributeGroupedItems[attribute]!.add(item);
+    }
     return Scaffold(
       appBar: AppBar(
         title: const Text('メニュー'),
       ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
-              '100gあたりの価格です．',
-              style: TextStyle(fontSize: 16, color: Colors.grey[700]),
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: ListView(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(bottom: 8.0),
+              child: Center(
+                child:Text(
+                  '100gあたりの価格です',
+                  style: TextStyle(fontSize: 16, color: Colors.grey[700]),
+                ),
+              )
             ),
-          ),
-          Expanded(
-            child: GridView.builder(
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 3,
-                childAspectRatio: 0.95,
-              ),
-              itemCount: menuItems.length,
-              itemBuilder: (context, index) {
-                return Card(
-                  child: InkWell(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ProductScreen(
-                            title: menuItems[index]['title']!,
-                            description: menuItems[index]['description']!,
-                            price: menuItems[index]['price']!.toString(),
-                            imagePath: 'assets/images/coffee.jpg',
-                            onOrderConfirmed: (quantity) {
-                              _showOrderDetails(menuItems[index]['title']!, quantity, menuItems[index]['price'].toString());
-                            },
-                            isFromHomePage: widget.isFromHomePage,
+            ...attributeGroupedItems.entries.map((entry) {
+              String attribute = entry.key;
+              List<dynamic> items = entry.value;
+
+              return ExpansionTile(
+                title: Text(
+                  attribute,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
+                ),
+                children: [
+                  GridView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 3,
+                      childAspectRatio: 0.95,
+                    ),
+                    itemCount: items.length,
+                    itemBuilder: (context, index) {
+                      return Card(
+                        child: InkWell(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ProductScreen(
+                                  title: items[index]['title']!,
+                                  description: items[index]['description']!,
+                                  price: items[index]['price']!.toString(),
+                                  imagePath: items[index]['image']!,
+                                  onOrderConfirmed: (quantity) {
+                                    _showOrderDetails(items[index]['title']!, quantity, items[index]['price'].toString());
+                                  },
+                                  isFromHomePage: widget.isFromHomePage,
+                                ),
+                              ),
+                            );
+                          },
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Image.asset(
+                                items[index]['image'],
+                                width: 100,
+                                height: 70,
+                                fit: BoxFit.cover,
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(top: 8.0),
+                                child: Text(
+                                  items[index]['title']!,
+                                  style: product_title,
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(top: 4.0),
+                                child: Text(
+                                  '価格: ¥${items[index]['price']}',
+                                  style: normal,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       );
                     },
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Image.asset(
-                          'assets/images/coffee.jpg',
-                          width: 50,
-                          height: 50,
-                          fit: BoxFit.cover,
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 8.0),
-                          child: Text(
-                            menuItems[index]['title']!,
-                            style: product_title,
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 4.0),
-                          child: Text(
-                            '価格: ¥${menuItems[index]['price']}',
-                            style: normal,
-                          ),
-                        ),
-                      ],
-                    ),
                   ),
-                );
-              },
-            ),
-          ),
-        ],
+                ],
+              );
+            }).toList(),
+          ],
+        ),
       ),
       floatingActionButton: _purchasedItems.isNotEmpty
           ? FloatingActionButton(
         onPressed: () async {
           final result = await _showPurchasedItems();
-
           if (result != null) {
             Navigator.pop(context, result);
           }
@@ -142,6 +170,8 @@ class _ProductPageState extends State<ProductPage> {
           : null,
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
+
+
   }
 
   Future<List<Map<String, dynamic>>?> _showPurchasedItems() async {
@@ -337,7 +367,9 @@ class QuantitySelector extends StatefulWidget {
   });
 
   @override
-  _QuantitySelectorState createState() => _QuantitySelectorState();
+  _QuantitySelectorState createState() {
+    return _QuantitySelectorState();
+  }
 }
 
 class _QuantitySelectorState extends State<QuantitySelector> {

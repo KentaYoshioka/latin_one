@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import './order.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class PersonalInfoForm extends StatefulWidget {
@@ -174,6 +175,7 @@ class _PersonalInfoFormState extends State<PersonalInfoForm> {
                   if (_formKey.currentState!.validate()) {
                     await _savePersonalInfo();  // 購入時に個人情報を保存
                     await _copyToClipboard();
+                    products=[];
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(builder: (context) => const PurchaseCompletePage()),
@@ -226,3 +228,5 @@ Future<Map<String, String>> loadPersonalInfo() async {
     'email': prefs.getString('email') ?? '',
   };
 }
+
+
