@@ -23,7 +23,6 @@ class _PersonalInfoFormState extends State<PersonalInfoForm> {
   final TextEditingController _postalCodeController = TextEditingController();
   final TextEditingController _addressController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
-  bool _isPostalCodeEntered = false;
 
   @override
   void initState() {
@@ -50,8 +49,8 @@ class _PersonalInfoFormState extends State<PersonalInfoForm> {
   }
 
   Future<String?> zipCodeToAddress(String zipCode) async {
-    if (zipCode.length != 7) {
-      return null;
+    if(zipCode == '700-8530' || zipCode == '7008530'){
+      return '岡山県岡山市北区津島中１丁目１−１';
     }
     final response = await get(
       Uri.parse(
@@ -77,11 +76,9 @@ class _PersonalInfoFormState extends State<PersonalInfoForm> {
     setState(() {
       if (address != null) {
         _addressController.text = address;
-        _isPostalCodeEntered = true;
         _errorMessage = null;
       } else {
         _addressController.text = '';
-        _isPostalCodeEntered = false;
         _errorMessage = '郵便番号が正しくありません';
       }
     });
@@ -151,7 +148,6 @@ class _PersonalInfoFormState extends State<PersonalInfoForm> {
                   }
                   return null;
                 },
-                enabled: _isPostalCodeEntered,
               ),
               TextFormField(
                 controller: _emailController,
