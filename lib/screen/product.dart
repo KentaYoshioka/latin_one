@@ -128,7 +128,7 @@ class _ProductPageState extends State<ProductPage> {
                               Image.asset(
                                 items[index]['image'],
                                 width: 100,
-                                height: 70,
+                                height: 50,
                                 fit: BoxFit.cover,
                               ),
                               Padding(
