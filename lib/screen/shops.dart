@@ -5,7 +5,6 @@ import 'package:flutter_map_animations/flutter_map_animations.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../style.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class ShopsPage extends StatefulWidget {
   const ShopsPage({super.key});
@@ -16,7 +15,7 @@ class ShopsPage extends StatefulWidget {
 
 class _ShopsPageState extends State<ShopsPage> with TickerProviderStateMixin {
   late final _animatedMapController = AnimatedMapController(vsync: this);
-  List<dynamic> shopPlaces = [];
+  List<Map<String, dynamic>> shopPlaces = [];
   final supabase = Supabase.instance.client;
 
   Future<void> fetchShop() async {
@@ -25,7 +24,7 @@ class _ShopsPageState extends State<ShopsPage> with TickerProviderStateMixin {
         .select('id, name, address, long, lat, phone');
 
     setState(() {
-      shopPlaces = response as List<dynamic>;
+      shopPlaces = (response as List).cast<Map<String, dynamic>>();
     });
   }
 
@@ -43,7 +42,6 @@ class _ShopsPageState extends State<ShopsPage> with TickerProviderStateMixin {
             child: const Text('詳細'),
             onPressed: () {
               Navigator.of(context).pop();
-              // ShopInfoPageに店舗情報を渡す
               Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -71,14 +69,13 @@ class _ShopsPageState extends State<ShopsPage> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("店舗情報"), // アプリバーのタイトル
+        title: const Text("店舗情報"),
       ),
       body: FlutterMap(
         mapController: _animatedMapController.mapController,
         options: const MapOptions(
           initialCenter: LatLng(33.57453, 133.57860),
-          initialZoom: 15,
-          minZoom: 10,
+          initialZoom: 5,
           maxZoom: 20,
         ),
         children: [
@@ -98,16 +95,15 @@ class _ShopsPageState extends State<ShopsPage> with TickerProviderStateMixin {
             ],
           ),
           MarkerLayer(
-            markers: shopPlaces.asMap().entries.map((entry) {
-              int index = entry.key;
-              var shop = entry.value;
+            markers: shopPlaces.map((shop) {
               return Marker(
                 width: 30.0,
                 height: 30.0,
-                point: LatLng(shop['lat'], shop['long']), // 緯度経度を使用してマーカーを配置
+                point: LatLng(shop['lat'], shop['long']),
                 child: GestureDetector(
                   onTapDown: (tapPosition) {
-                    _showAlert(index); // インデックスを渡してアラートを表示
+                    int index = shopPlaces.indexOf(shop);
+                    _showAlert(index);
                   },
                   child: const Icon(
                     Icons.location_on,
@@ -126,9 +122,9 @@ class _ShopsPageState extends State<ShopsPage> with TickerProviderStateMixin {
 }
 
 class ShopInfoPage extends StatelessWidget {
-  final dynamic shop; // 店舗情報を受け取る変数
+  final Map<String, dynamic> shop;
 
-  const ShopInfoPage({super.key, required this.shop}); // コンストラクタで受け取る
+  const ShopInfoPage({super.key, required this.shop});
 
   @override
   Widget build(BuildContext context) {
