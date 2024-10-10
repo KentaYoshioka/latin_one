@@ -16,7 +16,7 @@ class _OrderShopsPageState extends State<OrderShopsPage> with TickerProviderStat
   String shops = "";
   late final _animatedMapController = AnimatedMapController(vsync: this);
 
-  List<dynamic> shopPlaces = [];
+  List<Map<String, dynamic>> shopPlaces = [];
   final supabase = Supabase.instance.client;
 
   Future<void> fetchShop() async {
@@ -25,34 +25,35 @@ class _OrderShopsPageState extends State<OrderShopsPage> with TickerProviderStat
         .select('id, name, address, long, lat, phone');
 
     setState(() {
-      shopPlaces = response as List<dynamic>;
+      shopPlaces = (response as List).cast<Map<String, dynamic>>();
     });
   }
+
   Future<String?> _showAlert(int index) async {
-  return await showDialog<String>(
-    context: context,
-    builder: (context) => AlertDialog(
-      title: Text(shopPlaces[index]['name']),
-      content: Text(
-        shopPlaces[index]['address'], // 住所を表示
-        style: const TextStyle(fontSize: 20.0),
+    return await showDialog<String>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(shopPlaces[index]['name']),
+        content: Text(
+          shopPlaces[index]['address'], // 住所を表示
+          style: const TextStyle(fontSize: 20.0),
+        ),
+        actions: <Widget>[
+          TextButton(
+            child: const Text('選択'),
+            onPressed: () {
+              shops = '${shopPlaces[index]['name']}\n ${shopPlaces[index]['address']}';
+              Navigator.of(context).pop(shops);
+            },
+          ),
+          TextButton(
+            child: const Text('閉じる'),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
+        ],
       ),
-      actions: <Widget>[
-        TextButton(
-          child: const Text('選択'),
-          onPressed: () {
-            shops = '${shopPlaces[index]['name']}\n ${shopPlaces[index]['address']}';
-            Navigator.of(context).pop(shops); // ダイアログを閉じるとともにshopsを返す
-          },
-        ),
-        TextButton(
-          child: const Text('閉じる'),
-          onPressed: () => Navigator.of(context).pop(), // ダイアログを閉じる
-        ),
-      ],
-    ),
-  );
-}
+    );
+  }
 
   @override
   void initState() {
@@ -60,19 +61,20 @@ class _OrderShopsPageState extends State<OrderShopsPage> with TickerProviderStat
     fetchShop();
   }
 
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('店舗情報',
-          style: TextStyle(fontSize: 16.0),),
+        title: const Text(
+          '店舗情報',
+          style: TextStyle(fontSize: 16.0),
+        ),
       ),
       body: FlutterMap(
-        // mapControllerをFlutterMapに指定
         mapController: _animatedMapController.mapController,
         options: const MapOptions(
-          // Latin coffeeの緯度経度です。
           initialCenter: LatLng(33.57453, 133.57860),
-          initialZoom: 15,
+          initialZoom: 5,
           maxZoom: 20,
         ),
         children: [
@@ -80,27 +82,26 @@ class _OrderShopsPageState extends State<OrderShopsPage> with TickerProviderStat
             urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
           ),
           RichAttributionWidget(
-              attributions: [
-                TextSourceAttribution(
-                  'OpenStreetMap contributors',
-                  onTap: () => launchUrl(Uri.parse('https://openstreetmap.org/copyright')),
-                ),
-                TextSourceAttribution(
-                  'Google Map で開く',
-                  onTap: () => launchUrl(Uri.parse('https://maps.app.goo.gl/BqszzYwkEwk8UYrc8')),
-                ),
-              ]),
+            attributions: [
+              TextSourceAttribution(
+                'OpenStreetMap contributors',
+                onTap: () => launchUrl(Uri.parse('https://openstreetmap.org/copyright')),
+              ),
+              TextSourceAttribution(
+                'Google Map で開く',
+                onTap: () => launchUrl(Uri.parse('https://maps.app.goo.gl/BqszzYwkEwk8UYrc8')),
+              ),
+            ],
+          ),
           MarkerLayer(
-            markers: shopPlaces.asMap().entries.map((entry) {
-              int index = entry.key;
-              var shop = entry.value;
+            markers: shopPlaces.map((shop) {
               return Marker(
                 width: 30.0,
                 height: 30.0,
-                point: LatLng(shop['lat'], shop['long']), // 緯度経度を使用してマーカーを配置
+                point: LatLng(shop['lat'], shop['long']),
                 child: GestureDetector(
                   onTapDown: (tapPosition) async {
-                    String? shopsAlert = await _showAlert(index);
+                    String? shopsAlert = await _showAlert(shopPlaces.indexOf(shop));
                     if (shopsAlert != null && shopsAlert.isNotEmpty) {
                       Navigator.of(context).pop(shopsAlert);
                     }

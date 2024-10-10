@@ -98,7 +98,6 @@ class _OrderPageState extends State<OrderPage> {
               ),
             ),
 
-            // プロダクト選択
             GestureDetector(
               onTap: shops.isNotEmpty ? () async {
                 final product = await Navigator.push(
@@ -173,7 +172,6 @@ class _OrderPageState extends State<OrderPage> {
             )
                 : const SizedBox.shrink(),
 
-            // 選択された商品のリスト
             products.isNotEmpty ? Card(
               margin: const EdgeInsets.symmetric(vertical: 10),
               shape: RoundedRectangleBorder(
@@ -266,7 +264,6 @@ class _OrderPageState extends State<OrderPage> {
             )
                 : const SizedBox.shrink(),
 
-            // クリップボードの処理を削除し、個人情報入力フォームへ遷移
             shops.isNotEmpty && products.isNotEmpty ? GestureDetector(
               onTap: () {
                 Navigator.push(
