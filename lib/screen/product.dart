@@ -31,12 +31,14 @@ class _ProductPageState extends State<ProductPage> {
   }
 
   final List<Map<String, dynamic>> _purchasedItems = [];
-
+  double _calculateItemTotalPrice(Map<String, dynamic> item) {
+    double pricePer100g = double.parse(item['price']);
+    return item['quantity'] / 100 * pricePer100g;
+  }
   double _calculateTotalPrice() {
     double totalPrice = 0;
     for (var item in _purchasedItems) {
-      double pricePer100g = double.parse(item['price']);
-      totalPrice += item['quantity'] / 100 * pricePer100g;
+      totalPrice += _calculateItemTotalPrice(item);
     }
     return totalPrice;
   }
@@ -191,14 +193,25 @@ class _ProductPageState extends State<ProductPage> {
                       return ListTile(
                         title: Text(_purchasedItems[index]['title']),
                         subtitle: Text('数量: ${_purchasedItems[index]['quantity']}g'),
-                        trailing: IconButton(
-                          icon: const Icon(Icons.remove_circle_outline, color: Colors.red),
-                          onPressed: () {
-                            setState(() {
-                              _purchasedItems.removeAt(index);
-                            });
-                            Navigator.pop(context);
-                          },
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              '¥${_calculateItemTotalPrice(_purchasedItems[index]).toInt()}',
+                              style: const TextStyle(
+                                fontSize: 18,
+                              ),
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.remove_circle_outline, color: Colors.red),
+                              onPressed: () {
+                                setState(() {
+                                  _purchasedItems.removeAt(index);
+                                });
+                                Navigator.pop(context);
+                                },
+                            ),
+                          ],
                         ),
                       );
                     },
@@ -206,28 +219,30 @@ class _ProductPageState extends State<ProductPage> {
                 ),
                 Padding(
                   padding: const EdgeInsets.all(16.0),
-                  child: Text(
-                    '合計金額: ¥${_calculateTotalPrice().toInt()}',
-                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                ),
-                Align(
-                  alignment: Alignment.bottomRight,
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: ElevatedButton(
-                      onPressed: () {
-                        final orderDetails = _purchasedItems.map((item) {
-                          return {
-                            'title': item['title'],
-                            'quantity': item['quantity'],
-                            'totalPrice': (item['quantity'] / 100 * double.parse(item['price'])).toInt(),
-                          };
-                        }).toList();
-                        Navigator.pop(context, orderDetails);
-                      },
-                      child: const Text('購入'),
-                    ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Text(
+                        '合計金額: ¥${_calculateTotalPrice().toInt()}',
+                        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
+                      Align(
+                        alignment: Alignment.bottomRight,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            final orderDetails = _purchasedItems.map((item) {
+                              return {
+                                'title': item['title'],
+                                'quantity': item['quantity'],
+                                'totalPrice': (item['quantity'] / 100 * double.parse(item['price'])).toInt(),
+                              };
+                            }).toList();
+                            Navigator.pop(context, orderDetails);
+                          },
+                          child: const Text('購入'),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],
