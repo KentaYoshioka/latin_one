@@ -44,6 +44,9 @@ dependencies:
   supabase_flutter: ^2.6.0
   shared_preferences: ^2.0.9
   connectivity_plus: ^3.0.3
+  flutter_local_notifications: ^17.2.3
+  firebase_core: ^3.4.0
+  firebase_messaging: ^15.1.0
 
 dev_dependencies:
   flutter_test:
