@@ -24,6 +24,8 @@ void main() async {
   final fcmToken = await messagingInstance.getToken();
   debugPrint('FCM TOKEN: $fcmToken');
 
+  final fcmtopic = await messagingInstance.subscribeToTopic('allUsers');
+
   final flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
   if (Platform.isAndroid) {
     final androidImplementation =
