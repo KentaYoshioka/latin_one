@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
 import './product.dart';
 import './topic2.dart';
 import '../page.dart';
@@ -7,37 +6,8 @@ import '../style.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
-
-  Future<void> _checkConnectivity(BuildContext context) async {
-    final ConnectivityResult result = await Connectivity().checkConnectivity();
-    if (result == ConnectivityResult.none) {
-      _showNoConnectionDialog(context);
-    }
-  }
-
-  void _showNoConnectionDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('ネットワーク接続なし'),
-          content: const Text('インターネットに接続されていません。接続を確認してください。'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('OK'),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
-    _checkConnectivity(context);
 
     return Scaffold(
       body: Container(
