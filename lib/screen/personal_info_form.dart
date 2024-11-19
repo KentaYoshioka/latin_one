@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:http/http.dart';
 import 'package:email_validator/email_validator.dart';
 
@@ -10,8 +9,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 class PersonalInfoForm extends StatefulWidget {
   final List<Map<String, dynamic>> products;
   final int totalAmount;
+  final String shops;
+  final String fcmToken;
 
-  const PersonalInfoForm({super.key, required this.products, required this.totalAmount});
+  const PersonalInfoForm({super.key, required this.products, required this.shops, required this.totalAmount, required this.fcmToken});
 
   @override
   State<PersonalInfoForm> createState() => _PersonalInfoFormState();
@@ -84,22 +85,84 @@ class _PersonalInfoFormState extends State<PersonalInfoForm> {
     });
   }
 
-  Future<void> _copyToClipboard() async {
-    String clipboardText = '【個人情報】\n'
-        '名前: ${_nameController.text}\n'
-        '郵便番号: ${_postalCodeController.text}\n'
-        '住所: ${_addressController.text}\n'
-        'メールアドレス: ${_emailController.text}\n\n';
-
-    clipboardText += '【注文商品】\n';
-    for (var product in widget.products) {
-      clipboardText +=
-          '\n${product['title']} - ${product['quantity']}g - ¥${product['totalPrice']}\n';
-    }
-    clipboardText += '\nTotal: ¥${widget.totalAmount}';
-
-    Clipboard.setData(ClipboardData(text: clipboardText));
+Future<void> _submitPurchase() async {
+  String message = '【個人情報】\n'
+      '名前: ${_nameController.text}\n'
+      '郵便番号: ${_postalCodeController.text}\n'
+      '住所: ${_addressController.text}\n'
+      'メールアドレス: ${_emailController.text}\n\n';
+  message += '【注文商品】\n';
+  for (var product in widget.products) {
+    message +=
+        '${product['title']} - ${product['quantity']}g - ¥${product['totalPrice']}\n';
   }
+  message += '\n合計: ¥${widget.totalAmount}\n';
+
+  // 追加情報（ショップ名など）を含める
+  message += '\nショップ: ${widget.shops}\n';
+    final data = {
+      "fcmtoken": "${widget.fcmToken}", // 必要に応じて動的に設定
+      "gmail": "${_emailController.text}",
+      "message": "${message}",
+    };
+
+    try {
+      final response = await post(
+        Uri.parse('http://10.0.2.2:5050/send'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode(data),
+      );
+
+      if (response.statusCode == 200) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const PurchaseCompletePage()),
+        );
+      } else {
+        _showErrorDialog('購入処理中にエラーが発生しましたyo: ${response.reasonPhrase}');
+        debugPrint('Failed: ${response.reasonPhrase}');
+      }
+    } catch (e) {
+      _showErrorDialog('購入処理中にエラーが発生しました: $e');
+      debugPrint('Fail: $e');
+    }
+  }
+
+  void _showErrorDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('エラー'),
+          content: Text(message),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('閉じる'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+
+  // Future<void> _copyToClipboard() async {
+  //   String clipboardText = '【個人情報】\n'
+  //       '名前: ${_nameController.text}\n'
+  //       '郵便番号: ${_postalCodeController.text}\n'
+  //       '住所: ${_addressController.text}\n'
+  //       'メールアドレス: ${_emailController.text}\n\n';
+
+  //   clipboardText += '【注文商品】\n';
+  //   for (var product in widget.products) {
+  //     clipboardText +=
+  //         '\n${product['title']} - ${product['quantity']}g - ¥${product['totalPrice']}\n';
+  //   }
+  //   clipboardText += '\nTotal: ¥${widget.totalAmount}';
+
+  //   Clipboard.setData(ClipboardData(text: clipboardText));
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -218,7 +281,7 @@ class _PersonalInfoFormState extends State<PersonalInfoForm> {
                 onPressed: () async {
                   if (_formKey.currentState!.validate()) {
                     await _savePersonalInfo();  // 購入時に個人情報を保存
-                    await _copyToClipboard();
+                    await _submitPurchase();  // HTTP POST を実行
                     products=[];
                     Navigator.pushReplacement(
                       context,
