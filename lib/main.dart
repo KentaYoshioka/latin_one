@@ -45,45 +45,58 @@ class _ConnectionCheckerState extends State<ConnectionChecker> {
   }
 
   Future<void> _initializeApp() async {
-    await dotenv.load(fileName: '.env');
-    await Supabase.initialize(
-      url: dotenv.maybeGet('SUPABASE_URL') ?? 'default_url',
-      anonKey: dotenv.maybeGet('SUPABASE_KEY') ?? 'default_key',
-    );
+  await dotenv.load(fileName: '.env');
+  await Supabase.initialize(
+    url: dotenv.maybeGet('SUPABASE_URL') ?? 'default_url',
+    anonKey: dotenv.maybeGet('SUPABASE_KEY') ?? 'default_key',
+  );
 
-    try {
-      await Firebase.initializeApp();
-    } catch (e) {
-      debugPrint('Firebase initialization failed: $e');
-    }
-
-    final messagingInstance = FirebaseMessaging.instance;
-    messagingInstance.requestPermission();
-
-    try {
-      final fcmToken = await messagingInstance.getToken();
-      debugPrint('FCM TOKEN: $fcmToken');
-      await messagingInstance.subscribeToTopic('allUsers');
-    } catch (e) {
-      debugPrint('Failed to get FCM token or subscribe to topic: $e');
-    }
-
-    final flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-    if (!kIsWeb) {
-      final androidImplementation = flutterLocalNotificationsPlugin
-          .resolvePlatformSpecificImplementation<
-              AndroidFlutterLocalNotificationsPlugin>();
-      await androidImplementation?.createNotificationChannel(
-        const AndroidNotificationChannel(
-          'default_notification_channel',
-          'プッシュ通知のチャンネル名',
-          importance: Importance.max,
-        ),
-      );
-    }
-
-    _initNotification();
+  try {
+    await Firebase.initializeApp();
+  } catch (e) {
+    debugPrint('Firebase initialization failed: $e');
   }
+
+  final messagingInstance = FirebaseMessaging.instance;
+  messagingInstance.requestPermission();
+
+  String? fcmToken;
+  try {
+    fcmToken = await messagingInstance.getToken();
+    debugPrint('FCM TOKEN: $fcmToken');
+    await messagingInstance.subscribeToTopic('allUsers');
+  } catch (e) {
+    debugPrint('Failed to get FCM token or subscribe to topic: $e');
+    fcmToken = ''; // エラー時は空文字列
+  }
+
+  final flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+  if (!kIsWeb) {
+    final androidImplementation = flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>();
+    await androidImplementation?.createNotificationChannel(
+      const AndroidNotificationChannel(
+        'default_notification_channel',
+        'プッシュ通知のチャンネル名',
+        importance: Importance.max,
+      ),
+    );
+  }
+
+  _initNotification();
+
+  // nullチェックをして、fcmTokenがnullの場合は空文字を渡す
+  Navigator.pushReplacement(
+    context,
+    MaterialPageRoute(
+      builder: (context) => page.Page(
+        title: 'LatinOne', // titleは必須なので渡す
+        fcmToken: fcmToken ?? '', // fcmTokenがnullの場合は空文字を渡す
+      ),
+    ),
+  );
+}
 
   Future<void> _initNotification() async {
     final flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
@@ -124,7 +137,7 @@ class _ConnectionCheckerState extends State<ConnectionChecker> {
   }
 
   void _showNoConnectionDialog() {
-    if (_isDialogShowing) return; // ダイアログが既に表示されている場合は表示しない
+    if (_isDialogShowing) return;
 
     _isDialogShowing = true;
     showDialog(
@@ -149,6 +162,10 @@ class _ConnectionCheckerState extends State<ConnectionChecker> {
 
   @override
   Widget build(BuildContext context) {
-    return page.Page(title: 'LatinOne');
+    return const Scaffold(
+      body: Center(
+        child: CircularProgressIndicator(), // ローディング画面
+      ),
+    );
   }
 }

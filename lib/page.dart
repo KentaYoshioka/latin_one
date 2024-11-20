@@ -12,9 +12,9 @@ import './screen/product.dart';
 import './style.dart';
 
 class Page extends StatefulWidget {
-  const Page({super.key, required this.title});
+  Page({super.key, required this.title, required this.fcmToken});
   final String title;
-
+  final String fcmToken;
   @override
   Pages createState() => Pages();
 }
@@ -43,7 +43,7 @@ class Pages extends State<Page> {
     _pageWidgets.addAll([
       const HomePage(),
       const ShopsPage(),
-      const OrderPage(),
+      OrderPage(fcmToken: widget.fcmToken),
     ]);
   }
 

@@ -5,11 +5,13 @@ import 'package:latin_one/screen/personal_info_form.dart';
 import '../style.dart';
 
 class OrderPage extends StatefulWidget {
-  const OrderPage({super.key});
+  final String fcmToken;
+  const OrderPage({super.key, required this.fcmToken});
 
   @override
   State<OrderPage> createState() => _OrderPageState();
 }
+
 
 List<Map<String, dynamic>> products = [];
 
@@ -272,7 +274,9 @@ class _OrderPageState extends State<OrderPage> {
                     builder: (context) =>
                         PersonalInfoForm(
                           products: products,
+                          shops: shops,
                           totalAmount: totalAmount,
+                          fcmToken: widget.fcmToken
                         ),
                   ),
                 ).then((_) {
