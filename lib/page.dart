@@ -3,30 +3,33 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
 import './screen/home.dart';
 import './screen/order.dart';
 import './screen/shops.dart';
 import './screen/inbox.dart';
 import './screen/product.dart';
 import './style.dart';
+import 'dart:convert';
 
 class Page extends StatefulWidget {
-  Page({super.key, required this.title, required this.fcmToken});
+  const Page({super.key, required this.title, required this.fcmToken,this.type});
   final String title;
   final String fcmToken;
+  final String? type;
+
   @override
   Pages createState() => Pages();
 }
 
 class Pages extends State<Page> {
   int _selectedIndex = 0;
-  final List<Map<String, String>> _notifications = [];
+  final List<Map<String, String>> _notifications = []; // 通知リスト
   final _pageWidgets = <Widget>[];
-
   late Connectivity _connectivity;
   StreamSubscription<List<ConnectivityResult>>? _connectivitySubscription;
   StreamSubscription<RemoteMessage>? _messageSubscription;
+  String? _myToken;
   Timer? _timer;
   bool _isConnected = true;
   bool _isDialogShowing = false;
@@ -37,26 +40,101 @@ class Pages extends State<Page> {
     _connectivity = Connectivity();
     _startConnectivityMonitoring();
     _startPeriodicCheck();
-
     _initializeFirebaseMessaging();
+    _loadNotifications();
 
     _pageWidgets.addAll([
       const HomePage(),
       const ShopsPage(),
       OrderPage(fcmToken: widget.fcmToken),
     ]);
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (widget.type != null) {
+        _navigateToInbox();
+      }
+    });
+  }
+
+  Future<void> _loadNotifications() async {
+    final prefs = await SharedPreferences.getInstance();
+    final savedNotifications = prefs.getStringList('notifications') ?? [];
+    debugPrint('Saved notifications in SharedPreferences: $savedNotifications'); // デバッグログ
+    setState(() {
+      try {
+        _notifications.addAll(
+          savedNotifications.map((e) {
+            final decoded = json.decode(e);
+            if (decoded is Map<String, dynamic>) {
+              // すべての値を文字列に変換
+              return decoded.map((key, value) => MapEntry(key, value.toString()));
+            } else {
+              throw FormatException('通知データが無効な形式です: $decoded');
+            }
+          }),
+        );
+      } catch (e) {
+        debugPrint('通知データの読み込み中にエラーが発生: $e');
+      }
+    });
+    debugPrint('Loaded notifications in _notifications: $_notifications'); // デバッグログ
+  }
+
+  Future<void> _navigateToInbox() async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => InboxPage(
+          notifications: _notifications, // 保存された通知を渡す
+          deviceToken: widget.fcmToken,
+          initialTab: widget.type ?? '', // type を初期タブとして渡す
+        ),
+      ),
+    );
+
+    if (result == 'shops') {
+      setState(() {
+        _selectedIndex = 1;
+      });
+    } else if (result == 'products') {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const ProductPage(isFromHomePage: true),
+        ),
+      );
+    }
+  }
+
+  Future<void> _saveNotification(Map<String, String> notification) async {
+    final prefs = await SharedPreferences.getInstance();
+    final savedNotifications = prefs.getStringList('notifications') ?? [];
+    debugPrint('Before saving, existing notifications: $savedNotifications'); // デバッグログ
+    savedNotifications.add(json.encode(notification));
+    await prefs.setStringList('notifications', savedNotifications);
+
+    // ローカルリストにも追加
+    setState(() {
+      _notifications.add(notification);
+    });
+    debugPrint('Notification saved: $notification'); // デバッグログ
   }
 
   void _initializeFirebaseMessaging() {
-    // FirebaseMessagingリスナーの登録
     _messageSubscription = FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       if (message.notification != null) {
-        setState(() {
-          _notifications.add({
-            'title': message.notification!.title ?? 'No Title',
-            'body': message.notification!.body ?? 'No Body',
-          });
-        });
+        if (message.data['to'] == _myToken) {
+          final notification = {
+            'title': message.notification?.title ?? 'No Title',
+            'body': message.notification?.body ?? 'No Body',
+          };
+          _saveNotification(notification); // 通知を保存
+          debugPrint(
+            "Notification Received for my token: ${message.notification!.title}, ${message.notification!.body}",
+          ); // デバッグログ
+        } else {
+          debugPrint("Notification ignored: Not for my token"); // デバッグログ
+        }
       }
     });
   }
@@ -66,7 +144,7 @@ class Pages extends State<Page> {
       setState(() {
         _isConnected = results.any((result) => result != ConnectivityResult.none);
       });
-
+      debugPrint('Connectivity status changed. Connected: $_isConnected'); // デバッグログ
       if (!_isConnected && !_isDialogShowing) {
         _showNoConnectionDialog();
       }
@@ -79,7 +157,7 @@ class Pages extends State<Page> {
       setState(() {
         _isConnected = result != ConnectivityResult.none;
       });
-
+      debugPrint('Periodic connectivity check. Connected: $_isConnected'); // デバッグログ
       if (!_isConnected && !_isDialogShowing) {
         _showNoConnectionDialog();
       }
@@ -147,29 +225,31 @@ class Pages extends State<Page> {
             title: const Text('LatinOne', style: Default_title_Style),
             backgroundColor: Colors.brown,
             leading: IconButton(
-          icon: const Icon(Icons.inbox),
-          onPressed: () async {
-            final result = await Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => InboxPage(notifications: _notifications),
-              ),
-            );
-
-            if (result == 'shops') {
-              setState(() {
-                _selectedIndex = 1;
-              });
-            } else if (result == 'products') {
-              Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const ProductPage(isFromHomePage: true),
-                          ),
-                        );
-            }
-          },
-        ),
+              icon: const Icon(Icons.inbox),
+              onPressed: () async {
+                final result = await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => InboxPage(
+                      notifications: _notifications, // 保存された通知を渡す
+                      deviceToken: widget.fcmToken,
+                    ),
+                  ),
+                );
+                if (result == 'shops') {
+                  setState(() {
+                    _selectedIndex = 1;
+                  });
+                } else if (result == 'products') {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const ProductPage(isFromHomePage: true),
+                    ),
+                  );
+                }
+              },
+            ),
           ),
           body: IndexedStack(
             index: _selectedIndex,
@@ -199,3 +279,5 @@ class Pages extends State<Page> {
     );
   }
 }
+
+
