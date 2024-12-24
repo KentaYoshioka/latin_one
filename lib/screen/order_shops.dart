@@ -4,6 +4,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_map_animations/flutter_map_animations.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import '../network.dart';
 
 class OrderShopsPage extends StatefulWidget {
   const OrderShopsPage({super.key});
@@ -15,6 +16,7 @@ class OrderShopsPage extends StatefulWidget {
 class _OrderShopsPageState extends State<OrderShopsPage> with TickerProviderStateMixin {
   String shops = "";
   late final _animatedMapController = AnimatedMapController(vsync: this);
+  final NetworkHandler _networkHandler = NetworkHandler();
 
   List<Map<String, dynamic>> shopPlaces = [];
   final supabase = Supabase.instance.client;
@@ -41,9 +43,12 @@ class _OrderShopsPageState extends State<OrderShopsPage> with TickerProviderStat
         actions: <Widget>[
           TextButton(
             child: const Text('選択'),
-            onPressed: () {
-              shops = '${shopPlaces[index]['name']}\n ${shopPlaces[index]['address']}';
-              Navigator.of(context).pop(shops);
+            onPressed: () async{
+              if(await _networkHandler.checkConnectivity(context)) {
+                shops =
+                '${shopPlaces[index]['name']}\n ${shopPlaces[index]['address']}';
+                Navigator.of(context).pop(shops);
+              }
             },
           ),
           TextButton(

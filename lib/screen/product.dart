@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../style.dart';
+import '../network.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ProductPage extends StatefulWidget {
@@ -13,6 +14,7 @@ class ProductPage extends StatefulWidget {
 class _ProductPageState extends State<ProductPage> {
   List<dynamic> menuItems = [];
   final supabase = Supabase.instance.client;
+  final NetworkHandler _networkHandler = NetworkHandler();
 
   Future<void> fetchMenu() async {
     final response = await supabase
@@ -229,15 +231,18 @@ class _ProductPageState extends State<ProductPage> {
                       Align(
                         alignment: Alignment.bottomRight,
                         child: ElevatedButton(
-                          onPressed: () {
-                            final orderDetails = _purchasedItems.map((item) {
-                              return {
-                                'title': item['title'],
-                                'quantity': item['quantity'],
-                                'totalPrice': (item['quantity'] / 100 * double.parse(item['price'])).toInt(),
-                              };
-                            }).toList();
-                            Navigator.pop(context, orderDetails);
+                          onPressed: () async{
+                            if(await _networkHandler.checkConnectivity(context)) {
+                              final orderDetails = _purchasedItems.map((item) {
+                                return {
+                                  'title': item['title'],
+                                  'quantity': item['quantity'],
+                                  'totalPrice': (item['quantity'] / 100 *
+                                      double.parse(item['price'])).toInt(),
+                                };
+                              }).toList();
+                              Navigator.pop(context, orderDetails);
+                            }
                           },
                           child: const Text('購入'),
                         ),
