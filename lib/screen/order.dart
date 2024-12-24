@@ -3,6 +3,7 @@ import 'package:latin_one/screen/order_shops.dart';
 import 'package:latin_one/screen/product.dart';
 import 'package:latin_one/screen/personal_info_form.dart';
 import '../style.dart';
+import '../network.dart';
 
 class OrderPage extends StatefulWidget {
   final String fcmToken;
@@ -17,7 +18,7 @@ List<Map<String, dynamic>> products = [];
 
 class _OrderPageState extends State<OrderPage> {
   String shops = '';
-
+  final NetworkHandler _networkHandler = NetworkHandler();
 
   @override
   Widget build(BuildContext context) {
@@ -47,26 +48,28 @@ class _OrderPageState extends State<OrderPage> {
           children: [
             GestureDetector(
               onTap: () async {
-                final shopinfo = await Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) {
-                    return const OrderShopsPage();
-                  }),
-                );
-                if (shopinfo != null) {
-                  setState(() {
-                    shops = shopinfo;
-                  });
-                  final product = await Navigator.push(
+                if(await _networkHandler.checkConnectivity(context)){
+                  final shopinfo = await Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) {
-                      return const ProductPage(isFromHomePage: false);
+                      return const OrderShopsPage();
                     }),
                   );
-                  if (product != null) {
+                  if (shopinfo != null) {
                     setState(() {
-                      products = product;
+                      shops = shopinfo;
                     });
+                    final product = await Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) {
+                        return const ProductPage(isFromHomePage: false);
+                      }),
+                    );
+                    if (product != null) {
+                      setState(() {
+                        products = product;
+                      });
+                    }
                   }
                 }
               },
@@ -102,16 +105,18 @@ class _OrderPageState extends State<OrderPage> {
 
             GestureDetector(
               onTap: shops.isNotEmpty ? () async {
-                final product = await Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) {
-                    return const ProductPage(isFromHomePage: false);
-                  }),
-                );
-                if (product != null) {
-                  setState(() {
-                    addOrUpdateProducts(products, product);
-                  });
+                if (await _networkHandler.checkConnectivity(context)) {
+                  final product = await Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) {
+                      return const ProductPage(isFromHomePage: false);
+                    }),
+                  );
+                  if (product != null) {
+                    setState(() {
+                      addOrUpdateProducts(products, product);
+                    });
+                  }
                 }
               }
                   : null,
@@ -267,21 +272,23 @@ class _OrderPageState extends State<OrderPage> {
                 : const SizedBox.shrink(),
 
             shops.isNotEmpty && products.isNotEmpty ? GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) =>
-                        PersonalInfoForm(
-                          products: products,
-                          shops: shops,
-                          totalAmount: totalAmount,
-                          fcmToken: widget.fcmToken
-                        ),
-                  ),
-                ).then((_) {
-                  setState(() {});
-                });
+              onTap: () async{
+                if(await _networkHandler.checkConnectivity(context)){
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          PersonalInfoForm(
+                            products: products,
+                            shops: shops,
+                            totalAmount: totalAmount,
+                            fcmToken: widget.fcmToken
+                          ),
+                    ),
+                  ).then((_) {
+                    setState(() {});
+                  });
+                }
               },
               child: Align(
                 alignment: Alignment.center,

@@ -1,15 +1,16 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import './screen/home.dart';
 import './screen/order.dart';
 import './screen/shops.dart';
 import './screen/inbox.dart';
 import './screen/product.dart';
 import './style.dart';
+import './network.dart';
 import 'dart:convert';
 
 class Page extends StatefulWidget {
@@ -26,20 +27,17 @@ class Pages extends State<Page> {
   int _selectedIndex = 0;
   final List<Map<String, String>> _notifications = []; // 通知リスト
   final _pageWidgets = <Widget>[];
+  late NetworkHandler _networkHandler;
   late Connectivity _connectivity;
   StreamSubscription<List<ConnectivityResult>>? _connectivitySubscription;
   StreamSubscription<RemoteMessage>? _messageSubscription;
   String? _myToken;
-  Timer? _timer;
-  bool _isConnected = true;
-  bool _isDialogShowing = false;
 
   @override
   void initState() {
     super.initState();
     _connectivity = Connectivity();
-    _startConnectivityMonitoring();
-    _startPeriodicCheck();
+    _networkHandler = NetworkHandler();
     _initializeFirebaseMessaging();
     _loadNotifications();
 
@@ -139,65 +137,19 @@ class Pages extends State<Page> {
     });
   }
 
-  void _startConnectivityMonitoring() {
-    _connectivitySubscription = _connectivity.onConnectivityChanged.listen((List<ConnectivityResult> results) {
-      setState(() {
-        _isConnected = results.any((result) => result != ConnectivityResult.none);
-      });
-      debugPrint('Connectivity status changed. Connected: $_isConnected'); // デバッグログ
-      if (!_isConnected && !_isDialogShowing) {
-        _showNoConnectionDialog();
-      }
-    });
-  }
-
-  void _startPeriodicCheck() {
-    _timer = Timer.periodic(const Duration(seconds: 5), (Timer t) async {
-      var result = await _connectivity.checkConnectivity();
-      setState(() {
-        _isConnected = result != ConnectivityResult.none;
-      });
-      debugPrint('Periodic connectivity check. Connected: $_isConnected'); // デバッグログ
-      if (!_isConnected && !_isDialogShowing) {
-        _showNoConnectionDialog();
-      }
-    });
-  }
-
-  void _showNoConnectionDialog() {
-    _isDialogShowing = true;
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('ネットワーク接続なし'),
-          content: const Text('インターネットに接続されていません。接続を確認してください。'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                _isDialogShowing = false;
-              },
-              child: const Text('OK'),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
   @override
   void dispose() {
     _connectivitySubscription?.cancel();
     _messageSubscription?.cancel(); // FirebaseMessagingリスナーの解除
-    _timer?.cancel();
     super.dispose();
   }
 
-  void onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
+  void onItemTapped(int index) async{
+    if (await _networkHandler.checkConnectivity(context)) {
+      setState(() {
+        _selectedIndex = index;
+      });
+    }
   }
 
   void _handlePopInvoked() {
@@ -227,26 +179,28 @@ class Pages extends State<Page> {
             leading: IconButton(
               icon: const Icon(Icons.inbox),
               onPressed: () async {
-                final result = await Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => InboxPage(
-                      notifications: _notifications, // 保存された通知を渡す
-                      deviceToken: widget.fcmToken,
-                    ),
-                  ),
-                );
-                if (result == 'shops') {
-                  setState(() {
-                    _selectedIndex = 1;
-                  });
-                } else if (result == 'products') {
-                  Navigator.push(
+                if (await _networkHandler.checkConnectivity(context)) {
+                  final result = await Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const ProductPage(isFromHomePage: true),
+                      builder: (context) => InboxPage(
+                        notifications: _notifications, // 保存された通知を渡す
+                        deviceToken: widget.fcmToken,
+                      ),
                     ),
                   );
+                  if (result == 'shops') {
+                    setState(() {
+                      _selectedIndex = 1;
+                    });
+                  } else if (result == 'products') {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const ProductPage(isFromHomePage: true),
+                      ),
+                    );
+                  }
                 }
               },
             ),

@@ -4,6 +4,7 @@ import 'package:http/http.dart';
 import 'package:email_validator/email_validator.dart';
 
 import './order.dart';
+import '../network.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class PersonalInfoForm extends StatefulWidget {
@@ -24,6 +25,7 @@ class _PersonalInfoFormState extends State<PersonalInfoForm> {
   final TextEditingController _postalCodeController = TextEditingController();
   final TextEditingController _addressController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
+  final NetworkHandler _networkHandler = NetworkHandler();
 
   @override
   void initState() {
@@ -279,14 +281,17 @@ Future<void> _submitPurchase() async {
               const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () async {
-                  if (_formKey.currentState!.validate()) {
-                    await _savePersonalInfo();  // 購入時に個人情報を保存
-                    await _submitPurchase();  // HTTP POST を実行
-                    products=[];
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(builder: (context) => const PurchaseCompletePage()),
-                    );
+                  if(await _networkHandler.checkConnectivity(context)){
+                    if (_formKey.currentState!.validate()) {
+                      await _savePersonalInfo(); // 購入時に個人情報を保存
+                      await _submitPurchase(); // HTTP POST を実行
+                      products = [];
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const PurchaseCompletePage()),
+                      );
+                    }
                   }
                 },
                 child: const Text('購入'),
