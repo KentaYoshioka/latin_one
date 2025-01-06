@@ -55,6 +55,7 @@ class Pages extends State<Page> {
   }
 
   Future<void> _loadNotifications() async {
+    _notifications.clear();
     final prefs = await SharedPreferences.getInstance();
     final savedNotifications = prefs.getStringList('notifications') ?? [];
     debugPrint('Saved notifications in SharedPreferences: $savedNotifications'); // デバッグログ
@@ -69,7 +70,7 @@ class Pages extends State<Page> {
             } else {
               throw FormatException('通知データが無効な形式です: $decoded');
             }
-          }),
+          }).toList().reversed.toList(),
         );
       } catch (e) {
         debugPrint('通知データの読み込み中にエラーが発生: $e');
@@ -104,20 +105,6 @@ class Pages extends State<Page> {
     }
   }
 
-  Future<void> _saveNotification(Map<String, String> notification) async {
-    final prefs = await SharedPreferences.getInstance();
-    final savedNotifications = prefs.getStringList('notifications') ?? [];
-    debugPrint('Before saving, existing notifications: $savedNotifications'); // デバッグログ
-    savedNotifications.add(json.encode(notification));
-    await prefs.setStringList('notifications', savedNotifications);
-
-    // ローカルリストにも追加
-    setState(() {
-      _notifications.add(notification);
-    });
-    debugPrint('Notification saved: $notification'); // デバッグログ
-  }
-
   void _initializeFirebaseMessaging() {
     _messageSubscription = FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       if (message.notification != null) {
@@ -126,7 +113,6 @@ class Pages extends State<Page> {
             'title': message.notification?.title ?? 'No Title',
             'body': message.notification?.body ?? 'No Body',
           };
-          _saveNotification(notification); // 通知を保存
           debugPrint(
             "Notification Received for my token: ${message.notification!.title}, ${message.notification!.body}",
           ); // デバッグログ
@@ -179,6 +165,7 @@ class Pages extends State<Page> {
             leading: IconButton(
               icon: const Icon(Icons.inbox),
               onPressed: () async {
+                _loadNotifications();
                 if (await _networkHandler.checkConnectivity(context)) {
                   final result = await Navigator.push(
                     context,
