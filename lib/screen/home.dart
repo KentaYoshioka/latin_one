@@ -95,7 +95,7 @@ class HomePage extends StatelessWidget {
                     decoration: background_image('assets/images/IMG_8837.jpg'),
                     alignment: Alignment.center,
                       child: const Text(
-                          'topic2',
+                          'SHOP LIST',
                           style: Default_title_Style
                       )
                   ),
@@ -104,14 +104,10 @@ class HomePage extends StatelessWidget {
                     bottom: 20,
                     child: ElevatedButton(
                       onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const Topic2Page(),
-                          ),
-                        );
+                        var mainPageState = context.findAncestorStateOfType<Pages>();
+                        mainPageState?.onItemTapped(1);
                       },
-                      child: const Text('Topic2',
+                      child: const Text('Shop を見る',
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
