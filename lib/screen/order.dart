@@ -15,9 +15,9 @@ class OrderPage extends StatefulWidget {
 
 
 List<Map<String, dynamic>> products = [];
+Map<String, dynamic> shops= {};
 
 class _OrderPageState extends State<OrderPage> {
-  String shops = '';
   final NetworkHandler _networkHandler = NetworkHandler();
 
   @override
@@ -57,7 +57,7 @@ class _OrderPageState extends State<OrderPage> {
                   );
                   if (shopinfo != null) {
                     setState(() {
-                      shops = shopinfo;
+                      shops['name'] = shopinfo;
                     });
                     final product = await Navigator.push(
                       context,
@@ -168,7 +168,7 @@ class _OrderPageState extends State<OrderPage> {
                   color: Colors.white,
                 ),
                 child: Text(
-                  shops,
+                  shops['name'],
                   style: TextStyle(
                     fontSize: 18,
                     color: Colors.brown[700],
