@@ -10,7 +10,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class PersonalInfoForm extends StatefulWidget {
   final List<Map<String, dynamic>> products;
   final int totalAmount;
-  final String shops;
+  final Map<String, dynamic> shops;
   final String fcmToken;
 
   const PersonalInfoForm({super.key, required this.products, required this.shops, required this.totalAmount, required this.fcmToken});
@@ -121,7 +121,7 @@ Future<void> _submitPurchase() async {
           MaterialPageRoute(builder: (context) => const PurchaseCompletePage()),
         );
       } else {
-        _showErrorDialog('購入処理中にエラーが発生しましたyo: ${response.reasonPhrase}');
+        _showErrorDialog('購入処理中にエラーが発生しました: ${response.reasonPhrase}');
         debugPrint('Failed: ${response.reasonPhrase}');
       }
     } catch (e) {
@@ -286,6 +286,7 @@ Future<void> _submitPurchase() async {
                       await _savePersonalInfo(); // 購入時に個人情報を保存
                       await _submitPurchase(); // HTTP POST を実行
                       products = [];
+                      shops = {};
                       Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
