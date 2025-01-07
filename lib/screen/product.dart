@@ -33,10 +33,12 @@ class _ProductPageState extends State<ProductPage> {
   }
 
   final List<Map<String, dynamic>> _purchasedItems = [];
+
   double _calculateItemTotalPrice(Map<String, dynamic> item) {
     double pricePer100g = double.parse(item['price']);
     return item['quantity'] / 100 * pricePer100g;
   }
+
   double _calculateTotalPrice() {
     double totalPrice = 0;
     for (var item in _purchasedItems) {
@@ -44,6 +46,7 @@ class _ProductPageState extends State<ProductPage> {
     }
     return totalPrice;
   }
+
   void _showOrderDetails(String title, int quantity, String price) {
     int index = _purchasedItems.indexWhere((item) => item['title'] == title);
     if (index >= 0) {
@@ -52,7 +55,8 @@ class _ProductPageState extends State<ProductPage> {
       });
     } else {
       setState(() {
-        _purchasedItems.add({'title': title, 'quantity': quantity, 'price': price});
+        _purchasedItems.add(
+            {'title': title, 'quantity': quantity, 'price': price});
       });
     }
   }
@@ -61,7 +65,7 @@ class _ProductPageState extends State<ProductPage> {
   Widget build(BuildContext context) {
     Map<String, List<dynamic>> attributeGroupedItems = {};
     for (var item in menuItems) {
-      String attribute = item['attribute'];  // 属性に基づく
+      String attribute = item['attribute']; // 属性に基づく
       if (!attributeGroupedItems.containsKey(attribute)) {
         attributeGroupedItems[attribute] = [];
       }
@@ -69,20 +73,25 @@ class _ProductPageState extends State<ProductPage> {
     }
     return Scaffold(
       appBar: AppBar(
-        title: const Text('メニュー'),
+        title: Text(
+          'メニュー',
+          style: TextStyle(fontSize: 24 * (SizeConfig.screenWidthRatio ?? 1.0)),
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: ListView(
           children: [
             Padding(
-              padding: const EdgeInsets.only(bottom: 8.0),
-              child: Center(
-                child:Text(
-                  '100gあたりの価格です',
-                  style: TextStyle(fontSize: 16, color: Colors.grey[700]),
-                ),
-              )
+                padding: const EdgeInsets.only(bottom: 8.0),
+                child: Center(
+                  child: Text(
+                    '100gあたりの価格です',
+                    style: TextStyle(
+                        fontSize: 16 * (SizeConfig.screenWidthRatio ?? 1.0),
+                        color: Colors.grey[700]),
+                  ),
+                )
             ),
             ...attributeGroupedItems.entries.map((entry) {
               String attribute = entry.key;
@@ -91,8 +100,8 @@ class _ProductPageState extends State<ProductPage> {
               return ExpansionTile(
                 title: Text(
                   attribute,
-                  style: const TextStyle(
-                    fontSize: 18,
+                  style: TextStyle(
+                    fontSize: 18 * (SizeConfig.screenHeightRatio ?? 1.0),
                     fontWeight: FontWeight.bold,
                     color: Colors.black,
                   ),
@@ -113,16 +122,19 @@ class _ProductPageState extends State<ProductPage> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => ProductScreen(
-                                  title: items[index]['title']!,
-                                  description: items[index]['description']!,
-                                  price: items[index]['price']!.toString(),
-                                  imagePath: items[index]['image']!,
-                                  onOrderConfirmed: (quantity) {
-                                    _showOrderDetails(items[index]['title']!, quantity, items[index]['price'].toString());
-                                  },
-                                  isFromHomePage: widget.isFromHomePage,
-                                ),
+                                builder: (context) =>
+                                    ProductScreen(
+                                      title: items[index]['title']!,
+                                      description: items[index]['description']!,
+                                      price: items[index]['price']!.toString(),
+                                      imagePath: items[index]['image']!,
+                                      onOrderConfirmed: (quantity) {
+                                        _showOrderDetails(
+                                            items[index]['title']!, quantity,
+                                            items[index]['price'].toString());
+                                      },
+                                      isFromHomePage: widget.isFromHomePage,
+                                    ),
                               ),
                             );
                           },
@@ -131,22 +143,24 @@ class _ProductPageState extends State<ProductPage> {
                             children: [
                               Image.asset(
                                 items[index]['image'],
-                                width: 100,
-                                height: 50,
+                                width: 100 *
+                                    (SizeConfig.screenWidthRatio ?? 1.0),
+                                height: 50 *
+                                    (SizeConfig.screenHeightRatio ?? 1.0),
                                 fit: BoxFit.cover,
                               ),
                               Padding(
                                 padding: const EdgeInsets.only(top: 8.0),
                                 child: Text(
                                   items[index]['title']!,
-                                  style: product_title,
+                                  style: product_title(context),
                                 ),
                               ),
                               Padding(
                                 padding: const EdgeInsets.only(top: 4.0),
                                 child: Text(
                                   '価格: ¥${items[index]['price']}',
-                                  style: normal,
+                                  style: normal(context),
                                 ),
                               ),
                             ],
@@ -174,8 +188,6 @@ class _ProductPageState extends State<ProductPage> {
           : null,
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
-
-
   }
 
   Future<List<Map<String, dynamic>>?> _showPurchasedItems() async {
@@ -194,24 +206,28 @@ class _ProductPageState extends State<ProductPage> {
                     itemBuilder: (context, index) {
                       return ListTile(
                         title: Text(_purchasedItems[index]['title']),
-                        subtitle: Text('数量: ${_purchasedItems[index]['quantity']}g'),
+                        subtitle: Text(
+                            '数量: ${_purchasedItems[index]['quantity']}g'),
                         trailing: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Text(
-                              '¥${_calculateItemTotalPrice(_purchasedItems[index]).toInt()}',
-                              style: const TextStyle(
-                                fontSize: 18,
+                              '¥${_calculateItemTotalPrice(
+                                  _purchasedItems[index]).toInt()}',
+                              style: TextStyle(
+                                fontSize: 18 *
+                                    (SizeConfig.screenWidthRatio ?? 1.0),
                               ),
                             ),
                             IconButton(
-                              icon: const Icon(Icons.remove_circle_outline, color: Colors.red),
+                              icon: const Icon(Icons.remove_circle_outline,
+                                  color: Colors.red),
                               onPressed: () {
                                 setState(() {
                                   _purchasedItems.removeAt(index);
                                 });
                                 Navigator.pop(context);
-                                },
+                              },
                             ),
                           ],
                         ),
@@ -221,31 +237,31 @@ class _ProductPageState extends State<ProductPage> {
                 ),
                 Padding(
                   padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
                         '合計金額: ¥${_calculateTotalPrice().toInt()}',
-                        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                        style: TextStyle(fontSize: 18 *
+                            (SizeConfig.screenWidthRatio ?? 1.0),
+                            fontWeight: FontWeight.bold),
                       ),
-                      Align(
-                        alignment: Alignment.bottomRight,
-                        child: ElevatedButton(
-                          onPressed: () async{
-                            if(await _networkHandler.checkConnectivity(context)) {
-                              final orderDetails = _purchasedItems.map((item) {
-                                return {
-                                  'title': item['title'],
-                                  'quantity': item['quantity'],
-                                  'totalPrice': (item['quantity'] / 100 *
-                                      double.parse(item['price'])).toInt(),
-                                };
-                              }).toList();
-                              Navigator.pop(context, orderDetails);
-                            }
-                          },
-                          child: const Text('購入'),
-                        ),
+                      ElevatedButton(
+                        onPressed: () async {
+                          if (await _networkHandler.checkConnectivity(
+                              context)) {
+                            final orderDetails = _purchasedItems.map((item) {
+                              return {
+                                'title': item['title'],
+                                'quantity': item['quantity'],
+                                'totalPrice': (item['quantity'] / 100 *
+                                    double.parse(item['price'])).toInt(),
+                              };
+                            }).toList();
+                            Navigator.pop(context, orderDetails);
+                          }
+                        },
+                        child: const Text('購入'),
                       ),
                     ],
                   ),
@@ -302,10 +318,10 @@ class _ProductScreenState extends State<ProductScreen> {
                   child: Image.asset(
                     widget.imagePath,
                     fit: BoxFit.cover,
-                    height: 150,
+                    height: 150 * (SizeConfig.screenHeightRatio ?? 1.0),
                   ),
                 ),
-                const SizedBox(width: 16),
+                SizedBox(width: 16 * (SizeConfig.screenWidthRatio ?? 1.0)),
                 Expanded(
                   flex: 3,
                   child: Column(
@@ -313,36 +329,36 @@ class _ProductScreenState extends State<ProductScreen> {
                     children: [
                       Text(
                         widget.title,
-                        style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                        style: TextStyle(fontSize: 24 * (SizeConfig.screenHeightRatio ?? 1.0), fontWeight: FontWeight.bold),
                       ),
-                      const SizedBox(height: 8),
+                      SizedBox(height: 8 * (SizeConfig.screenHeightRatio ?? 1.0)),
                       Text(
                         '価格: ¥${widget.price}',
-                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.green[700]),
+                        style: TextStyle(fontSize: 20 * (SizeConfig.screenHeightRatio ?? 1.0), fontWeight: FontWeight.bold, color: Colors.green[700]),
                       ),
                     ],
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 16),
-            const Text(
+            SizedBox(height: 16 * (SizeConfig.screenHeightRatio ?? 1.0)),
+            Text(
               '商品説明',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 18 * (SizeConfig.screenHeightRatio ?? 1.0), fontWeight: FontWeight.bold),
             ),
-            const SizedBox(height: 8),
+            SizedBox(height: 8 * (SizeConfig.screenHeightRatio ?? 1.0)),
             Text(
               widget.description,
-              style: const TextStyle(fontSize: 16),
+              style: TextStyle(fontSize: 16 * (SizeConfig.screenHeightRatio ?? 1.0)),
             ),
-            const SizedBox(height: 24),
+            SizedBox(height: 24 * (SizeConfig.screenHeightRatio ?? 1.0)),
             if (!widget.isFromHomePage)
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text(
+                  Text(
                     '数量を選択（100g単位）',
-                    style: TextStyle(fontSize: 16),
+                    style: TextStyle(fontSize: 16 * (SizeConfig.screenHeightRatio ?? 1.0)),
                   ),
                   QuantitySelector(
                     initialQuantity: quantity,
@@ -359,16 +375,16 @@ class _ProductScreenState extends State<ProductScreen> {
       ),
       floatingActionButton: !widget.isFromHomePage
           ? SizedBox(
-        width: 150,
-        height: 50,
+        width: 150 * (SizeConfig.screenWidthRatio ?? 1.0),
+        height: 50 * (SizeConfig.screenHeightRatio ?? 1.0),
         child: ElevatedButton(
           onPressed: () {
             widget.onOrderConfirmed(quantity);
             Navigator.pop(context);
           },
-          child: const Text(
+          child: Text(
             '決定する',
-            style: TextStyle(fontSize: 16),
+            style: TextStyle(fontSize: 16 * (SizeConfig.screenHeightRatio ?? 1.0)),
           ),
         ),
       )

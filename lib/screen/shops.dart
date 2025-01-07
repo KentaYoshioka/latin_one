@@ -37,7 +37,7 @@ class _ShopsPageState extends State<ShopsPage> with TickerProviderStateMixin {
         title: Text(shopPlaces[index]['name']), // 店舗名を表示
         content: Text(
           shopPlaces[index]['address'], // 住所を表示
-          style: const TextStyle(fontSize: 20.0),
+          style: TextStyle(fontSize: 20.0 * (SizeConfig.screenHeightRatio ?? 1.0)),
         ),
         actions: <Widget>[
           TextButton(
@@ -73,7 +73,10 @@ class _ShopsPageState extends State<ShopsPage> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("店舗情報"),
+        title: Text(
+            "店舗情報",
+            style: TextStyle(fontSize: 20.0 * (SizeConfig.screenWidthRatio ?? 1.0)),
+        ),
       ),
       body: FlutterMap(
         mapController: _animatedMapController.mapController,
@@ -101,18 +104,18 @@ class _ShopsPageState extends State<ShopsPage> with TickerProviderStateMixin {
           MarkerLayer(
             markers: shopPlaces.map((shop) {
               return Marker(
-                width: 30.0,
-                height: 30.0,
+                width: 30.0 * (SizeConfig.screenHeightRatio ?? 1.0),
+                height: 30.0 * (SizeConfig.screenWidthRatio ?? 1.0),
                 point: LatLng(shop['lat'], shop['long']),
                 child: GestureDetector(
                   onTapDown: (tapPosition) {
                     int index = shopPlaces.indexOf(shop);
                     _showAlert(index);
                   },
-                  child: const Icon(
+                  child: Icon(
                     Icons.location_on,
                     color: Colors.red,
-                    size: 30,
+                    size: 30 * (SizeConfig.screenWidthRatio ?? 1.0),
                   ),
                 ),
                 rotate: true,
@@ -134,7 +137,10 @@ class ShopInfoPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(shop['name']), // 店舗名を表示
+        title: Text(
+            shop['name'],
+            style: TextStyle(fontSize: 20.0 * (SizeConfig.screenWidthRatio ?? 1.0)),
+        ), // 店舗名を表示
       ),
       body: Center(
         child: ListView(
@@ -143,14 +149,14 @@ class ShopInfoPage extends StatelessWidget {
               alignment: Alignment.center,
               child: Text(
                 shop['name'], // 店舗名を表示
-                style: Shopinfo_title,
+                style: Shopinfo_title(context),
               ),
             ),
             Container(
               alignment: Alignment.center,
               child: Text(
                 shop['address'], // 住所を表示
-                style: Shopinfo,
+                style: Shopinfo(context),
               ),
             ),
             ElevatedButton(
@@ -170,22 +176,22 @@ class ShopInfoPage extends StatelessWidget {
             // 画像などのコンテンツ
             Container(
               margin: const EdgeInsets.all(10),
-              width: 350,
-              height: 200,
+              width: 350 * (SizeConfig.screenWidthRatio ?? 1.0),
+              height: 200 * (SizeConfig.screenHeightRatio ?? 1.0),
               decoration: background_image('assets/images/IMG_8834.jpg'),
               alignment: Alignment.center,
             ),
             Container(
               margin: const EdgeInsets.all(10),
-              width: 350,
-              height: 200,
+              width: 350 * (SizeConfig.screenWidthRatio ?? 1.0),
+              height: 200 * (SizeConfig.screenHeightRatio ?? 1.0),
               decoration: background_image('assets/images/IMG_8835.jpg'),
               alignment: Alignment.center,
             ),
             Container(
               margin: const EdgeInsets.all(10),
-              width: 350,
-              height: 200,
+              width: 350 * (SizeConfig.screenWidthRatio ?? 1.0),
+              height: 200 * (SizeConfig.screenHeightRatio ?? 1.0),
               decoration: background_image('assets/images/IMG_8836.jpg'),
               alignment: Alignment.center,
             ),

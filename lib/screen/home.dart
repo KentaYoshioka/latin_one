@@ -9,6 +9,7 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
+
     return Scaffold(
       body: Container(
         padding: const EdgeInsets.all(32.0),
@@ -20,26 +21,26 @@ class HomePage extends StatelessWidget {
                 children: [
                   Container(
                     margin: const EdgeInsets.all(10),
-                    width: 350,
-                    height: 200,
+                    width: 350 * (SizeConfig.screenWidthRatio ?? 1.0),
+                    height: 200 * (SizeConfig.screenHeightRatio ?? 1.0),
                     decoration: background_image('assets/images/coffee.jpg'),
                     alignment: Alignment.center,
-                      child: const Text(
+                      child: Text(
                           'MOBILE ORDER & PAY',
-                          style: Default_title_Style
+                          style: Default_title_Style(context)
                       )
                   ),
                   Positioned(
-                    left: 20,
-                    bottom: 20,
+                    left: 20 * (SizeConfig.screenWidthRatio ?? 1.0),
+                    bottom: 20 * (SizeConfig.screenHeightRatio ?? 1.0),
                     child: ElevatedButton(
                       onPressed: () {
                         var mainPageState = context.findAncestorStateOfType<Pages>();
                         mainPageState?.onItemTapped(2);
                       },
-                      child: const Text('Order をする',
+                      child: Text('Order をする',
                         style: TextStyle(
-                          fontSize: 20,
+                          fontSize: 20 * (SizeConfig.screenHeightRatio ?? 1.0),
                           fontWeight: FontWeight.bold,
                           color: Colors.black,
                         ),
@@ -53,18 +54,18 @@ class HomePage extends StatelessWidget {
                 children: [
                   Container(
                     margin: const EdgeInsets.all(10),
-                    width: 350,
-                    height: 200,
+                    width: 350 * (SizeConfig.screenWidthRatio ?? 1.0),
+                    height: 200 * (SizeConfig.screenHeightRatio ?? 1.0),
                     decoration: background_image('assets/images/IMG_8836.jpg'),
                     alignment: Alignment.center,
-                      child: const Text(
+                      child: Text(
                           'COFFEE LIST',
-                          style: Default_title_Style
+                          style: Default_title_Style(context)
                       )
                   ),
                   Positioned(
-                    left: 20,
-                    bottom: 20,
+                    left: 20 * (SizeConfig.screenWidthRatio ?? 1.0),
+                    bottom: 20 * (SizeConfig.screenHeightRatio ?? 1.0),
                     child: ElevatedButton(
                       onPressed: () {
                         Navigator.push(
@@ -74,9 +75,9 @@ class HomePage extends StatelessWidget {
                           ),
                         );
                       },
-                      child: const Text('Menu を見る',
+                      child: Text('Menu を見る',
                         style: TextStyle(
-                          fontSize: 20,
+                          fontSize: 20 * (SizeConfig.screenHeightRatio ?? 1.0),
                           fontWeight: FontWeight.bold,
                           color: Colors.black,
                         ),
@@ -90,26 +91,26 @@ class HomePage extends StatelessWidget {
                 children: [
                   Container(
                     margin: const EdgeInsets.all(10),
-                    width: 350,
-                    height: 200,
+                    width: 350 * (SizeConfig.screenWidthRatio ?? 1.0),
+                    height: 200 * (SizeConfig.screenHeightRatio ?? 1.0),
                     decoration: background_image('assets/images/IMG_8837.jpg'),
                     alignment: Alignment.center,
-                      child: const Text(
+                      child: Text(
                           'SHOP LIST',
-                          style: Default_title_Style
+                          style: Default_title_Style(context)
                       )
                   ),
                   Positioned(
-                    left: 20,
-                    bottom: 20,
+                    left: 20 * (SizeConfig.screenWidthRatio ?? 1.0),
+                    bottom: 20 * (SizeConfig.screenHeightRatio ?? 1.0),
                     child: ElevatedButton(
                       onPressed: () {
                         var mainPageState = context.findAncestorStateOfType<Pages>();
                         mainPageState?.onItemTapped(1);
                       },
-                      child: const Text('Shop を見る',
+                      child: Text('Shop を見る',
                         style: TextStyle(
-                          fontSize: 20,
+                          fontSize: 20 * (SizeConfig.screenHeightRatio ?? 1.0),
                           fontWeight: FontWeight.bold,
                           color: Colors.black,
                         ),

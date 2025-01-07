@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../style.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class InboxPage extends StatefulWidget {
@@ -60,12 +61,15 @@ class _InboxPageState extends State<InboxPage> with SingleTickerProviderStateMix
     return Scaffold(
       appBar: AppBar(
         title: const Text('Inbox'),
-        bottom: TabBar(
-          controller: _tabController,
-          tabs: const [
-            Tab(text: 'News'),
-            Tab(text: 'Message'),
-          ],
+        bottom: PreferredSize(
+          preferredSize: Size.fromHeight(56 * (SizeConfig.screenHeightRatio ?? 1.0)),
+          child: TabBar(
+            controller: _tabController,
+            tabs: const [
+              Tab(text: 'News'),
+              Tab(text: 'Message'),
+            ],
+          ),
         ),
       ),
       body: TabBarView(

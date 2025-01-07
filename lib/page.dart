@@ -158,62 +158,71 @@ class Pages extends State<Page> {
           return false;
         },
         child: Scaffold(
-          appBar: AppBar(
-            centerTitle: true,
-            title: const Text('LatinOne', style: Default_title_Style),
-            backgroundColor: Colors.brown,
-            leading: IconButton(
-              icon: const Icon(Icons.inbox),
-              onPressed: () async {
-                _loadNotifications();
-                if (await _networkHandler.checkConnectivity(context)) {
-                  final result = await Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => InboxPage(
-                        notifications: _notifications, // 保存された通知を渡す
-                        deviceToken: widget.fcmToken,
-                      ),
-                    ),
-                  );
-                  if (result == 'shops') {
-                    setState(() {
-                      _selectedIndex = 1;
-                    });
-                  } else if (result == 'products') {
-                    Navigator.push(
+          appBar: PreferredSize(
+            preferredSize: Size.fromHeight(56 * (SizeConfig.screenHeightRatio ?? 1.0)),
+            child: AppBar(
+              centerTitle: true,
+              title: Text('LatinOne', style: Default_title_Style(context)),
+              backgroundColor: Colors.brown,
+              leading: IconButton(
+                icon: const Icon(Icons.inbox),
+                onPressed: () async {
+                  _loadNotifications();
+                  if (await _networkHandler.checkConnectivity(context)) {
+                    final result = await Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const ProductPage(isFromHomePage: true),
+                        builder: (context) => InboxPage(
+                          notifications: _notifications, // 保存された通知を渡す
+                          deviceToken: widget.fcmToken,
+                        ),
                       ),
                     );
+                    if (result == 'shops') {
+                      setState(() {
+                        _selectedIndex = 1;
+                      });
+                    } else if (result == 'products') {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const ProductPage(isFromHomePage: true),
+                        ),
+                      );
+                    }
                   }
-                }
-              },
+                },
+              ),
             ),
           ),
           body: IndexedStack(
             index: _selectedIndex,
             children: _pageWidgets,
           ),
-          bottomNavigationBar: BottomNavigationBar(
-            currentIndex: _selectedIndex,
-            onTap: onItemTapped,
-            type: BottomNavigationBarType.fixed,
-            items: const <BottomNavigationBarItem>[
-              BottomNavigationBarItem(
-                icon: Icon(Icons.home),
-                label: 'home',
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.map),
-                label: 'shops',
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.shopping_cart),
-                label: 'order',
-              ),
-            ],
+          bottomNavigationBar: Container(
+            height: 65 * (SizeConfig.screenHeightRatio ?? 1.0),
+            child: BottomNavigationBar(
+              iconSize: 24 * (SizeConfig.screenHeightRatio ?? 1.0),
+              selectedLabelStyle: TextStyle(fontSize: 16.0 * (SizeConfig.screenHeightRatio ?? 1.0)),
+              unselectedLabelStyle: TextStyle(fontSize: 14.0 * (SizeConfig.screenHeightRatio ?? 1.0)),
+              currentIndex: _selectedIndex,
+              onTap: onItemTapped,
+              type: BottomNavigationBarType.fixed,
+              items: const <BottomNavigationBarItem>[
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.home),
+                  label: 'home',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.map),
+                  label: 'shops',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.shopping_cart),
+                  label: 'order',
+                ),
+              ],
+            ),
           ),
         ),
       ),
