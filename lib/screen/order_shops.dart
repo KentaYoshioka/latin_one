@@ -5,6 +5,7 @@ import 'package:flutter_map_animations/flutter_map_animations.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../network.dart';
+import '../style.dart';
 
 class OrderShopsPage extends StatefulWidget {
   const OrderShopsPage({super.key});
@@ -38,7 +39,7 @@ class _OrderShopsPageState extends State<OrderShopsPage> with TickerProviderStat
         title: Text(shopPlaces[index]['name']),
         content: Text(
           shopPlaces[index]['address'], // 住所を表示
-          style: const TextStyle(fontSize: 20.0),
+          style: TextStyle(fontSize: 20.0 * (SizeConfig.screenHeightRatio ?? 1.0)),
         ),
         actions: <Widget>[
           TextButton(
@@ -70,9 +71,9 @@ class _OrderShopsPageState extends State<OrderShopsPage> with TickerProviderStat
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
+        title: Text(
           '店舗情報',
-          style: TextStyle(fontSize: 16.0),
+          style: TextStyle(fontSize: 16.0 * (SizeConfig.screenWidthRatio ?? 1.0)),
         ),
       ),
       body: FlutterMap(
@@ -101,8 +102,8 @@ class _OrderShopsPageState extends State<OrderShopsPage> with TickerProviderStat
           MarkerLayer(
             markers: shopPlaces.map((shop) {
               return Marker(
-                width: 30.0,
-                height: 30.0,
+                width: 30.0 * (SizeConfig.screenWidthRatio ?? 1.0),
+                height: 30.0 * (SizeConfig.screenHeightRatio ?? 1.0),
                 point: LatLng(shop['lat'], shop['long']),
                 child: GestureDetector(
                   onTapDown: (tapPosition) async {
@@ -111,10 +112,10 @@ class _OrderShopsPageState extends State<OrderShopsPage> with TickerProviderStat
                       Navigator.of(context).pop(shopsAlert);
                     }
                   },
-                  child: const Icon(
+                  child: Icon(
                     Icons.location_on,
                     color: Colors.red,
-                    size: 30,
+                    size: 30 * (SizeConfig.screenHeightRatio ?? 1.0),
                   ),
                 ),
                 rotate: true,

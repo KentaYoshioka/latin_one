@@ -31,10 +31,11 @@ class _OrderPageState extends State<OrderPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
+        title: Text(
           'Order',
           style: TextStyle(
             color: Colors.white,
+            fontSize: 30 * (SizeConfig.screenHeightRatio ?? 1.0),
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -87,12 +88,12 @@ class _OrderPageState extends State<OrderPage> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.store, size: 40, color: Colors.green[600]),
-                      const SizedBox(width: 10),
+                      Icon(Icons.store, size: 40 * (SizeConfig.screenWidthRatio ?? 1.0), color: Colors.green[600]),
+                      SizedBox(width: 10 * (SizeConfig.screenWidthRatio ?? 1.0)),
                       Text(
                         'Select Shops',
                         style: TextStyle(
-                          fontSize: 20,
+                          fontSize: 20 * (SizeConfig.screenWidthRatio ?? 1.0),
                           fontWeight: FontWeight.bold,
                           color: Colors.brown[700],
                         ),
@@ -136,14 +137,14 @@ class _OrderPageState extends State<OrderPage> {
                     children: [
                       Icon(
                         Icons.shopping_cart,
-                        size: 40,
+                        size: 40 * (SizeConfig.screenWidthRatio ?? 1.0),
                         color: shops.isNotEmpty ? Colors.green : Colors.grey,
                       ),
-                      const SizedBox(width: 10),
+                      SizedBox(width: 10 * (SizeConfig.screenWidthRatio ?? 1.0)),
                       Text(
                         'Select Product',
                         style: TextStyle(
-                          fontSize: 20,
+                          fontSize: 20 * (SizeConfig.screenWidthRatio ?? 1.0),
                           fontWeight: FontWeight.bold,
                           color: shops.isNotEmpty
                               ? Colors.brown[700]
@@ -170,7 +171,7 @@ class _OrderPageState extends State<OrderPage> {
                 child: Text(
                   shops['name'],
                   style: TextStyle(
-                    fontSize: 18,
+                    fontSize: 18 * (SizeConfig.screenHeightRatio ?? 1.0),
                     color: Colors.brown[700],
                     fontWeight: FontWeight.bold,
                   ),
@@ -205,14 +206,14 @@ class _OrderPageState extends State<OrderPage> {
                                 Text(
                                   product['title'],
                                   style: TextStyle(
-                                    fontSize: 16,
+                                    fontSize: 16 * (SizeConfig.screenHeightRatio ?? 1.0),
                                     color: Colors.brown[700],
                                   ),
                                 ),
                                 Text(
                                   '${product['quantity']}g',
                                   style: TextStyle(
-                                    fontSize: 16,
+                                    fontSize: 16 * (SizeConfig.screenHeightRatio ?? 1.0),
                                     color: Colors.brown[700],
                                   ),
                                 ),
@@ -223,7 +224,7 @@ class _OrderPageState extends State<OrderPage> {
                                 Text(
                                   '¥${product['totalPrice']}',
                                   style: TextStyle(
-                                    fontSize: 18,
+                                    fontSize: 18 * (SizeConfig.screenHeightRatio ?? 1.0),
                                     color: Colors.green[700],
                                   ),
                                 ),
@@ -250,7 +251,7 @@ class _OrderPageState extends State<OrderPage> {
                         Text(
                           'Total',
                           style: TextStyle(
-                            fontSize: 18,
+                            fontSize: 18 * (SizeConfig.screenHeightRatio ?? 1.0),
                             fontWeight: FontWeight.bold,
                             color: Colors.brown[700],
                           ),
@@ -258,7 +259,7 @@ class _OrderPageState extends State<OrderPage> {
                         Text(
                           '¥$totalAmount',
                           style: TextStyle(
-                            fontSize: 18,
+                            fontSize: 18 * (SizeConfig.screenHeightRatio ?? 1.0),
                             fontWeight: FontWeight.bold,
                             color: Colors.green[700],
                           ),
@@ -293,20 +294,20 @@ class _OrderPageState extends State<OrderPage> {
               child: Align(
                 alignment: Alignment.center,
                 child: Container(
-                  height: 50,
-                  width: 350,
+                  height: 50 * (SizeConfig.screenHeightRatio ?? 1.0),
+                  width: 350 * (SizeConfig.screenWidthRatio ?? 1.0),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     border: Border.all(
                       color: Colors.brown,
-                      width: 2.0,
+                      width: 2.0 * (SizeConfig.screenWidthRatio ?? 1.0),
                     ),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   alignment: Alignment.center,
-                  child: const Text(
+                  child: Text(
                     '個人情報入力フォームへ',
-                    style: Order_Style,
+                    style: Order_Style(context),
                   ),
                 ),
               ),
