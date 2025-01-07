@@ -11,11 +11,10 @@
 
 ### 店舗側
 
-- アカウント作成：SupabaseおよびFirebaseのプロジェクトを作成し，アプリと連携する準備を行う．(参考リンク：[Firebase](https://firebase.google.com/)｜[Supabase](https://supabase.com/))
+- アカウント作成：SupabaseおよびFirebaseのアカウントを作成し，アプリと連携する準備を行う．(参考リンク：[Firebase](https://firebase.google.com/)｜[Supabase](https://supabase.com/))
 - 商品登録：supabase から商品を登録
 - Firebaseの登録：
-
-  - Firebaseプロジェクト：[https://console.firebase.google.com/project/latin-one2/overview](https://console.firebase.google.com/project/latin-one2/overview)
+  - Firebaseプロジェクトを作成
   - Firebase CLIのセットアップ：
     ```bash
     curl -sL https://firebase.tools | bash
