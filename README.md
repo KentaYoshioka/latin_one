@@ -13,6 +13,9 @@
 
 - アカウント作成：SupabaseおよびFirebaseのアカウントを作成し，アプリと連携する準備を行う．(参考リンク：[Firebase](https://firebase.google.com/)｜[Supabase](https://supabase.com/))
 - 商品登録：supabase から商品を登録
+- 通知機能のためのサーバ構築：[https://github.com/SenoOh/fcm\_server](https://github.com/SenoOh/fcm_server)
+
+### クライアント側
 - Firebaseの登録：
   - Firebaseプロジェクトを作成
   - Firebase CLIのセットアップ：
@@ -23,13 +26,8 @@
     export PATH= "<flutterfire_path>"
     flutterfire configure --project=<project_name>
     ```
-- 通知機能のためのサーバ構築：[https://github.com/SenoOh/fcm\_server](https://github.com/SenoOh/fcm_server)
-
-### クライアント側
 
 - 商品選択：ホーム画面で「MOBILE ORDER & PAY」を選択し，「SelectShop」から店舗を選択する．その後，「SelectProduct」を選択し，メニューから商品を選び，カートに追加する．
-
-
 
 <table>
   <tr>
