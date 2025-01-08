@@ -16,6 +16,11 @@
 - 通知機能のためのサーバ構築：[https://github.com/SenoOh/fcm\_server](https://github.com/SenoOh/fcm_server)
 
 ### クライアント側
+- パッケージのインストール
+     ``` bash
+      flutter pub get
+     ```
+
 - Firebaseの登録：
   - Firebaseプロジェクトを作成
   - Firebase CLIのセットアップ：
