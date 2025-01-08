@@ -28,8 +28,8 @@
     curl -sL https://firebase.tools | bash
     firebase login
     dart pub global activate flutterfire_cli
-    export PATH= "<flutterfire_path>"
-    flutterfire configure --project=<project_name>
+    export PATH="<flutterfire_path>"
+    flutterfire configure --project=latin-one2
     ```
 
 - 商品選択：ホーム画面で「MOBILE ORDER & PAY」を選択し，「SelectShop」から店舗を選択する．その後，「SelectProduct」を選択し，メニューから商品を選び，カートに追加する．
