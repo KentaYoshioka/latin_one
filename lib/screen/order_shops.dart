@@ -47,7 +47,7 @@ class _OrderShopsPageState extends State<OrderShopsPage> with TickerProviderStat
             onPressed: () async{
               if(await _networkHandler.checkConnectivity(context)) {
                 shops =
-                '${shopPlaces[index]['name']}\n ${shopPlaces[index]['address']}';
+                '${shopPlaces[index]['name']}';
                 Navigator.of(context).pop(shops);
               }
             },
