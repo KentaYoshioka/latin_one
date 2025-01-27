@@ -96,8 +96,8 @@ Future<void> _submitPurchase() async {
   }
 
   final response = await supabase
-      .from('order')
-      .insert({'name': '${_nameController.text}', 'postalcode': '${_postalCodeController.text}', 'address': '${_addressController.text}', 'email': '${_emailController.text}', 'order': '${pur_order}', 'sum': '${widget.totalAmount}', 'shop': '${widget.shops}', 'fcmtoken': '${widget.fcmToken}'});
+      .from('orders')
+      .insert({'name': '${_nameController.text}', 'postalcode': '${_postalCodeController.text}', 'address': '${_addressController.text}', 'email': '${_emailController.text}', 'order': '${pur_order}', 'sum': '${widget.totalAmount}', 'shop': '${widget.shops['name']}', 'fcmtoken': '${widget.fcmToken}'});
       }
 
 
