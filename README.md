@@ -16,6 +16,11 @@
 - 通知機能のためのサーバ構築：[https://github.com/SenoOh/fcm\_server](https://github.com/SenoOh/fcm_server)
 
 ### クライアント側
+- このプロジェクトをクローン
+     ``` bash
+      git clone https://github.com/KentaYoshioka/latin_one.git
+     ```
+- .env を作成し，supabase利用のための情報を入力
 - パッケージのインストール
      ``` bash
       flutter pub get
