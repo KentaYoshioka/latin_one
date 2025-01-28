@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "683619567095",
+    "project_id": "latin-one2",
+    "storage_bucket": "latin-one2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:683619567095:android:9cfbb318fd259dc2625af2",
+        "android_client_info": {
+          "package_name": "com.example.latin_one"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCrxaOcHnmZ45HP0nR6FkAwsEd_5XM6Ep8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
